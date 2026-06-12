@@ -8,3 +8,7 @@ __pycache__/
 *.log
 .replit
 replit.nix
+neu-attendai/.config/
+neu-attendai/.agents/
+neu-attendai/.local/
+neu-attendai/replit.md
