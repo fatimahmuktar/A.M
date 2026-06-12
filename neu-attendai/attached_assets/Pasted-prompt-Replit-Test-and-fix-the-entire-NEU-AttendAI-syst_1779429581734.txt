@@ -1,0 +1,34 @@
+prompt اختبار شامل للمشروع — انسخيه في Replit:
+
+Test and fix the entire NEU AttendAI system end-to-end. Go through each flow and fix any bugs found:
+Test 1 — Admin Excel Upload:
+	•	Upload the timetable Excel file
+	•	Verify courses are parsed correctly from the room-based matrix format (rows = rooms, columns = days × time slots)
+	•	Each cell like CMPE412 INSTRUCTOR_NAME should be split into: course_code=CMPE412, instructor=INSTRUCTOR_NAME, room from row header, day and time from column header
+	•	Check that GET /courses/search?q=CMPE412 returns correct results with room, day, time, instructor
+Test 2 — Student Flow:
+	•	Login as student → search CMPE412 → add it → logout → login again → course must still appear
+	•	My Schedule page must show the course in the correct day/time slot in the weekly grid
+	•	My Attendance page must show the course card with 0% attendance initially
+Test 3 — Professor Flow:
+	•	Login as professor → search CMPE412 → add it → logout → login again → course must still appear
+	•	Start a live session → QR code appears and rotates every 2 minutes → 6-digit code shown below QR
+	•	Session timer counts up from 0:00
+	•	End Session button stops everything and saves the session to history
+Test 4 — Attendance Recording:
+	•	Student scans QR or enters 6-digit code during active session
+	•	Backend verifies: (1) code is valid and not expired, (2) student GPS is within campus geofence
+	•	If both pass → mark student as present → store in attendance_records table with: student_id, course_code, session_id, timestamp, location, type=QR
+	•	Student’s attendance % updates immediately on their portal
+Test 5 — Professor sees Student Records:
+	•	After student records attendance → professor opens Student Records page
+	•	Table shows: student name, student ID, present/absent per session, overall attendance %
+	•	Professor can manually mark any student present/absent
+Test 6 — Impossible Travel Detection (AI fraud check):
+	•	If the same student records attendance for two different locations within an impossible time gap (e.g. 2 courses in different buildings within 1 minute) → flag as suspicious
+	•	Store flag in database → show warning in Admin panel
+Fix any bug found in each test before moving to the next. Report what was fixed.
+
+هذا يغطي كل المشروع من البداية للنهاية ويجعل Replit يصلح كل مشكلة تلقائياً. 🎯
+
+بعد ما تشغليه، أخبريني بالنتائج وسنكمل! 💪

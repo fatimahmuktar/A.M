@@ -1,0 +1,14 @@
+رؤيتك لمشروع "NEU AttendAI" أصبحت متكاملة الآن. أنت بحاجة إلى نظام يربط بين (إدارة البيانات، تسجيل الطلاب، وجدولة الحضور).
+إليك "البرومت" الشامل والاحترافي الذي يغطي هذه المتطلبات الثلاثة (التسجيل، الجدول، والحضور عبر الباركود):
+> **"Build a full-stack student portal for 'NEU AttendAI'. The system must include: 1) A 'Course Enrollment' feature where students can search and add courses from a central database. 2) A dynamic 'My Schedule' page that visualizes the student's enrolled courses. 3) A 'Digital Attendance' feature that generates a unique QR code for each student linked to their session/class. Ensure the UI is dark-themed, minimalist, and responsive. Include the backend logic to handle database interactions (using Supabase) and ensure that attendance is marked only when the student scans the code within the correct geofenced location/time."**
+> 
+### كيف سيعمل هذا النظام تقنياً؟
+ 1. **جدول الطالب (My Schedule):** بمجرد أن يضيف الطالب مادة، يتم حفظ هذا الارتباط في قاعدة البيانات (جدول Enrollments يربط Student_ID بـ Course_ID). الصفحة ستعرض فقط الكورسات المرتبطة بهذا الطالب.
+ 2. **باركود الحضور (QR Attendance):**
+   * عندما يفتح الطالب صفحة "الحضور"، يقوم النظام بتوليد QR Code يحتوي على بيانات مشفرة (Token) تشمل: (رقم الطالب، كود المادة، والتوقيت الحالي).
+   * يمكنك استخدام مكتبة مثل qrcode.js في الواجهة الأمامية لتوليد الباركود.
+   * عندما يقوم المعلم (أو الجهاز المثبت في القاعة) بمسح هذا الباركود، يتم إرسال البيانات لقاعدة البيانات لتسجيل الحضور.
+ 3. **التحقق (Geofencing):** لضمان أن الطالب موجود فعلياً في الجامعة، يمكنك استخدام خاصية Geolocation API في المتصفح لطلب موقع الطالب (بموافقته) ومقارنة إحداثيات موقعه بإحداثيات القاعة المخزنة في قاعدة البيانات.
+### نصيحة إضافية للتطوير:
+بما أنك تستخدم **Replit**، يمكنك جعل هذا النظام يعمل بشكل أسرع باستخدام **Next.js**، حيث توفر ميزات قوية لربط قواعد البيانات والتعامل مع حالات تسجيل الدخول (Authentication) بشكل آمن جداً.
+هل تريد مني مساعدتك في تصميم "مخطط قاعدة البيانات" (Database Schema) الذي تحتاجه لربط الطلاب بالكورسات وبالحضور؟ (هذا سيجعل بناء المشروع أسهل بكثير).

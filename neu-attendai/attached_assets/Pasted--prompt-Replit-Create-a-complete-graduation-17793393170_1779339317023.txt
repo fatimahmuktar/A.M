@@ -1,0 +1,168 @@
+بعد مراجعة الملزمة بدقة، هذا الـ prompt المحدّث والأكثر دقة لـ Replit:
+
+Create a complete graduation project report for NEU AttendAI as a downloadable DOCX file, following EXACTLY the NEU Computer Engineering Department guidelines.
+
+PROJECT INFORMATION:
+
+	•	Title: NEU AttendAI — Smart Geo-Fencing Attendance System
+	•	Student: Lyan Omar Mohammed | ID: 24700035
+	•	Department: Computer Engineering, Near East University, Nicosia, TRNC
+	•	Code: COM-400 | Academic Year: 2024–2025, Spring Semester
+	•	Supervisor: [Supervisor Title and Name]
+	•	Backend: Python FastAPI, PostgreSQL, SQLAlchemy ORM, Alembic, JWT, Pydantic
+	•	Frontend: React, TypeScript, Vite, Tailwind CSS
+
+PAGE FORMAT (Section 4.1 of NEU Guide):
+
+	•	Paper: A4 (297x210mm), portrait
+	•	Margins: Left = 3.5cm, Top = 2.5cm, Bottom = 2.5cm, Right = 2.5cm
+	•	Line spacing: 1.5 throughout the ENTIRE document including headings, references, figures, tables
+	•	Body font: Times New Roman, 12pt, justified
+	•	Page numbers: bottom center
+
+HEADING STYLES (Section 3.2.5 of NEU Guide):
+
+	•	Heading 1 (chapter titles): Times New Roman, 14pt, Bold, UPPERCASE, centered
+	•	Heading 2 (section): Times New Roman, 14pt, Bold, Title Case
+	•	Heading 3 (subsection): Times New Roman, 12pt, Bold, Title Case
+
+COVER PAGE (Figure 3.1 of NEU Guide — no page number):
+
+Centered, Arial font, all same style:
+
+	•	Line 2: NEAR EAST UNIVERSITY — Arial 20pt Bold
+	•	Line 5: Faculty of Engineering — Arial 20pt Bold
+	•	Line 8: Department of Computer Engineering — Arial 18pt Bold, single line spacing
+	•	Line 13: NEU ATTENDAI: SMART GEO-FENCING ATTENDANCE SYSTEM — Arial 18pt Bold (title)
+	•	Line 16: Graduation Project COM-400 — Arial 18pt Bold
+	•	Line 21: Student: Lyan Omar Mohammed — Arial 18pt Bold
+	•	Line 24: Supervisor: [Title and Name] — Arial 18pt Bold
+	•	Line 29: Nicosia — 2025 — Arial 16pt Bold
+
+TITLE PAGE: Exact copy of cover page, first inside page, no page number.
+
+PAGE NUMBERING:
+
+	•	Cover Page: no number
+	•	Title Page: no number
+	•	Acknowledgment: roman (i)
+	•	Abstract: roman (ii)
+	•	Table of Contents: roman (iii)
+	•	List of Abbreviations: roman (iv)
+	•	Introduction onwards: arabic starting from (1)
+
+FIGURES (Section 4.2):
+
+	•	Caption BELOW the figure, 1.5 spacing
+	•	Numbered as Figure X.Y (chapter.occurrence)
+	•	If copied from reference: add [RefNumber] at end of caption
+
+TABLES (Section 4.3):
+
+	•	Caption ABOVE the table, 1.5 spacing
+	•	Numbered as Table X.Y (chapter.occurrence)
+
+REFERENCES: IEEE format with square brackets [1], [2]… cited inline in text. 12pt Times New Roman, 1.5 spacing.
+
+DOCUMENT STRUCTURE (in exact order):
+
+1. Cover Page
+
+2. Title Page
+
+3. ACKNOWLEDGMENT — page (i), max one page. Thank supervisor first, then university, then family.
+
+4. ABSTRACT — page (ii), max 200 words, one paragraph, no elaboration. End with: Keywords: Attendance Management, Geo-Fencing, QR Code, GPS Verification, Python, FastAPI, Academic Integrity.
+
+5. TABLE OF CONTENTS — page (iii), 3-level, with dot leaders and page numbers.
+
+6. LIST OF ABBREVIATIONS — page (iv), two-column table: API, GPS, JWT, QR, NEU, REST, UUID, ORM, SQL, HOTP, SPA, SSO, TRNC, UI/UX, CRUD, HTTPS, JSON, PWA
+
+7. LIST OF FIGURES
+
+8. LIST OF TABLES
+
+9. INTRODUCTION — starts page 1
+
+	•	1.1 Background and Motivation
+	•	1.2 Problem Statement
+	•	1.3 Aims and Objectives (numbered list 1–7)
+	•	1.4 Scope and Limitations
+	•	1.5 Report Organisation
+
+10. CHAPTER TWO: LITERATURE REVIEW
+
+	•	2.1 Existing Attendance Systems
+	•	2.2 QR Code-Based Approaches
+	•	2.3 Geo-Fencing in Educational Settings
+	•	2.4 Fraud Detection Techniques
+	•	2.5 Comparative Analysis — include Table 2.1 comparing: Paper/Manual, Fingerprint, Face Recognition, BLE Beacon, Static QR, Dynamic QR+GPS (NEU AttendAI)
+
+11. CHAPTER THREE: SYSTEM REQUIREMENTS ANALYSIS
+
+	•	3.1 Stakeholder Analysis (Admin, Professor, Student — write as prose paragraphs NOT table)
+	•	3.2 Functional Requirements — write as prose grouped by portal (Admin, Professor, Student, System) NOT a table
+	•	3.3 Non-Functional Requirements (Performance, Security, Usability, Compatibility — bullet points)
+	•	3.4 Use Case Analysis (UC-01 Admin, UC-02 Professor, UC-03 Student)
+
+12. CHAPTER FOUR: SYSTEM ARCHITECTURE AND DESIGN
+
+	•	4.1 Overall Architecture (SPA + REST API + PostgreSQL, describe data flow)
+	•	4.2 Technology Stack — Python 3.12, FastAPI, Uvicorn, PostgreSQL 16, SQLAlchemy ORM, Alembic, Pydantic v2, JWT (python-jose), bcrypt, React, TypeScript, Vite, Tailwind CSS — write as prose NOT table
+	•	4.3 Database Design — write as prose describing each table (users, courses, sessions, attendance_records, student_courses, faculty_courses, warnings) NOT a table
+	•	4.4 Core Algorithms (HOTP-style token Python code block + Haversine Python code block)
+	•	4.5 Security Architecture
+
+13. CHAPTER FIVE: SECURITY AND SAFETY MEASURES
+
+	•	5.1 Overview of Security Design
+	•	5.2 Authentication and Authorisation (JWT, role-based: Admin/Professor/Student, token expiry)
+	•	5.3 Password Security (bcrypt hashing with salt, no plaintext storage)
+	•	5.4 GPS Spoofing Detection (mock location flags, accuracy value analysis)
+	•	5.5 Impossible Travel Detection (Haversine velocity check, >30 km/h flagging, faculty review not auto-reject)
+	•	5.6 Session Token Security (120-second HOTP-style rotation, replay attack prevention)
+	•	5.7 Input Validation and Injection Prevention (Pydantic schemas, SQLAlchemy parameterised queries, no raw SQL)
+	•	5.8 HTTPS and Transport Security
+	•	5.9 Data Privacy Considerations (minimal data collection, GDPR awareness)
+
+14. CHAPTER SIX: IMPLEMENTATION
+
+	•	6.1 Development Environment
+	•	6.2 Authentication Module
+	•	6.3 Admin Portal (Excel timetable import, course management)
+	•	6.4 Professor Portal — use “Professor” NOT “Faculty” throughout report (Live session, QR display, roster)
+	•	6.5 Student Portal (course registration, GPS check-in flow)
+
+15. CHAPTER SEVEN: TESTING AND EVALUATION
+
+	•	7.1 Test Strategy (functional, boundary, security, usability — 5 participants)
+	•	7.2 Functional Testing — write as grouped prose paragraphs NOT a 16-row table. Group by: Excel Import, Course Search, QR/Token, GPS Verification, Interface/Session. State all 16 cases PASS.
+	•	7.3 Security Testing (Token Replay, GPS Spoofing, Token Sharing — each as scenario/result)
+	•	7.4 Usability Evaluation (SUS score 86.5/100 = Excellent, task ratings 4.2–5.0/5)
+
+16. CONCLUSIONS AND FUTURE WORK
+
+	•	Conclusions: confirm all 7 objectives achieved, reference SUS score
+	•	Future Work: Phase 2 server-side, NEU SSO, native QR scanning, push notifications, SIS integration
+
+17. REFERENCES — IEEE format, minimum 15 references, numbered [1]–[17]+
+
+18. APPENDIX A — Project File Structure (Python FastAPI structure)
+
+19. APPENDIX B — Excel Timetable Format Specification (table of accepted column headers)
+
+20. APPENDIX C — Classroom Coordinate Register (sample table)
+
+CRITICAL RULES:
+
+	•	NEVER use “Faculty Portal” or “faculty member” — always use “Professor Portal” and “professor” (exception: “Faculty of Engineering” department name is kept)
+	•	Functional Requirements: prose only, NO table
+	•	Database Schema: prose only, NO table
+	•	Test Cases: grouped prose only, NO 16-row table
+	•	Technology Stack: prose only, NO table
+	•	All text body: justified alignment
+	•	Minimum 60 pages, target 80–100 pages
+	•	Formal academic English throughout
+	•	Every figure and table must be referenced in the text before it appears
+
+هذا الـ prompt يتبع الملزمة بدقة من Figure 3.1 للغلاف، وSection 4.1 للهوامش، وSection 3.2.5 للعناوين، وSection 4.2/4.3 للأشكال والجداول.

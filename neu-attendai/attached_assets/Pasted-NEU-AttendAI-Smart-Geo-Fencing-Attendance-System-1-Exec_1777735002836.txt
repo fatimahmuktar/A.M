@@ -1,0 +1,135 @@
+NEU AttendAI
+
+Smart Geo-Fencing Attendance System
+
+ 
+
+ 
+
+1. Executive Summary and Project Vision
+
+NEU AttendAI revolutionizes classroom attendance management. It is not merely a tool for recording absence, but an integrated platform that uses modern technology to solve manipulation issues and ensure the integrity of the educational process. The core vision is to eliminate proxy attendance and human error by enforcing a double-verification protocol that combines Geo-Fencing (to confirm physical presence in the classroom) with a Dynamic QR Code validation.
+
+ 
+
+The system is designed not only to record attendance but to act as a policy enforcement engine, providing faculty with a clear, real-time overview and maintaining their authority through a structured warning and deprivation system. This report details the architectural design, core technologies, and a phased implementation roadmap for a successful project delivery.
+
+ 
+
+Key Features of the Proposed System:
+
+• Zero Proxy Attendance: Achieved via mandatory GPS verification within a 50m classroom perimeter and a Dynamic QR Code that changes every few seconds.
+• Advanced Security: Includes mechanisms for GPS Spoofing Detection and Impossible Travel Detection.
+• SSO Integration: Seamless authentication for faculty using the university's Single Sign-On (SSO) system.
+• Policy Engine: Automated enforcement of the 70% attendance threshold with a 3-stage warning system.
+• Real-time Monitoring: A live dashboard showing attendance status and location data.
+ 
+
+ 
+
+ 
+
+2. System Architecture and Core Logic
+
+2.1 Proposed Technology Stack
+
+The system is planned to be built on a modern, maintainable, and scalable technology stack:
+
+ 
+
+Component
+Technology
+Purpose
+Backend
+Node.js + Express + Socket.io
+Handlin g real-time data flow and core business logic.
+Database
+MongoDB (Planned)
+Scalable storage for student profiles, attendance records, and policy data.
+Frontend
+React + TypeScript + Leaflet.js
+Developing the interactive faculty dashboard and student check-in interface.
+Geolocation
+Haversine Formula + Fused Location Provider
+Implementing the precise 50m classroom geofencing logic, utilizing Wi-Fi Positioning for indoor accuracy.
+Authentication
+JWT + SSO Integration
+Secure and seamless login for faculty and staff.
+Mobile
+Progressive Web App (PWA)
+Ensuring cross-platform accessibility for faculty devices.
+2.2 Core Logic: Geo-Fencing and AI-Powered Enforcement Engine
+
+The system's reliability is built upon critical, advanced algorithms and Artificial Intelligence (AI) logic:
+
+ 
+
+A. Haversine Geo-Fencing Algorithm
+
+This proprietary algorithm is used to calculate the great-circle distance between two points on a sphere (the Earth).
+
+ 
+
+• Function: Verifies that the student's current GPS coordinates are within a 50-meter radius of the registered classroom coordinates.
+• Indoor Accuracy: Addresses weak indoor GPS signals by leveraging the Fused Location Provider which combines GPS, Wi-Fi, and cellular data for better accuracy.
+ 
+
+B. Policy and AI-Powered Enforcement Engine
+
+This engine applies the university's academic policy through statistical modeling and structured logic, incorporating advanced fraud detection:
+
+ 
+
+• Anomaly Detection (AI Touch): Uses Impossible Travel Detection to compare the time and location of the current check-in with the student's last recorded location. If the distance is too great for the elapsed time (e.g., traveling between two buildings in one second), the system flags the attempt as fraudulent.
+• GPS Spoofing Detection: The system includes a check for common indicators of location spoofing (e.g., detecting if "Developer Options" are enabled on Android devices), adding an extra layer of security.
+• 70% Threshold: Automatically tracks each student's attendance rate against the required 70% minimum.
+• 3-Warning System: Implements a progressive warning system (e.g., Warning 1 at 80%, Warning 2 at 75%, Warning 3 at 70%).
+ 
+
+ 
+
+ 
+
+3. Implementation Roadmap (Phase I)
+
+The project will be executed in a structured development cycle to ensure timely delivery of a functional prototype.
+
+ 
+
+Phase
+Focus Area
+Key Deliverables
+Status
+Phase 1
+Core Logic & Backend
+Finalize system architecture. Implement SSO integration. Develop core Geo-Fencing and Policy Engine logic, including Impossible Travel Detection and Dynamic QR generation.
+Planned
+Phase 2
+Frontend & Real-time
+Develop the real-time faculty dashboard (using Leaflet.js for map visualization). Implement Socket.io for live data updates and the student QR check-in interface.
+Planned
+Phase 3
+Testing & Documentation
+Conduct comprehensive functional testing and security audits. Prepare the final project report and a deployable prototype for demonstration.
+Planned
+3.1 Data Security and Privacy
+
+The system is designed with a strong commitment to student privacy. Location tracking is strictly limited to the moment of attendance registration. No continuous tracking of student location is performed outside of the check-in process. All data is anonymized and stored securely, complying with standard university data protection policies.
+
+ 
+
+3.2 Future Enhancements (Post-Prototype)
+
+The modular design ensures clear pathways for future expansion:
+
+ 
+
+Phase
+Recommendation
+Phase A
+Full integration with the university's Student Information System (SIS). Development of a dedicated mobile application (Native App).
+Phase B
+Implementation of Predictive Analytics ( predicting student drop-out risk based on attendance trends). Multi-campus deployment strategy.
+4. Conclusion
+
+The NEU AttendAI system is highly practical project. By focusing on secure double-verification, AI-powered policy enforcement, and robust privacy measures, the system provides a modern, reliable, and academically responsible solution to the challenge of attendance management. This report demonstrates a clear vision and a robust plan for successful implementation.

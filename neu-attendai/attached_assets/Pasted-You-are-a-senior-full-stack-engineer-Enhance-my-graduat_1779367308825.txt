@@ -1,0 +1,220 @@
+You are a senior full-stack engineer.
+
+Enhance my graduation project “NEU AttendAI” into a fully working smart university attendance system.
+
+IMPORTANT:
+Do NOT redesign the whole project.
+Focus on implementing the real core functionality professionally.
+
+Preserve:
+- existing frontend
+- routing
+- authentication
+- current UI structure
+- existing database connection
+
+==================================
+SYSTEM OVERVIEW
+==================================
+
+The system has 3 main roles:
+
+1. Admin
+2. Student
+3. Instructor
+
+==================================
+1. ADMIN EXCEL IMPORT SYSTEM
+==================================
+
+Create a professional Excel upload system for admins.
+
+The uploaded Excel file contains:
+- course code
+- course name
+- instructor name
+- classroom
+- lecture location
+- lecture day
+- lecture start time
+- lecture end time
+
+When the admin uploads the file:
+- Parse the Excel file automatically
+- Save all data into database
+- Automatically create courses
+- Automatically create schedules
+- Automatically create lecture records
+- Automatically save classroom locations
+
+Add validation:
+- prevent duplicate courses
+- handle missing fields
+- show success/error messages
+
+==================================
+2. COURSE SEARCH & QUICK ADD
+==================================
+
+Students and instructors must be able to:
+- search for courses quickly
+- add courses with one click
+
+If the course already exists from Excel:
+- automatically display:
+  - course info
+  - instructor
+  - classroom
+  - lecture time
+  - lecture location
+
+Allow instant enrollment/addition.
+
+==================================
+3. MANUAL COURSE CREATION
+==================================
+
+If the course does NOT exist in Excel:
+- students and instructors can create it manually
+
+Required fields:
+- course name
+- course code
+- classroom
+- lecture day
+- lecture start/end time
+
+Save manually created courses into database.
+
+==================================
+4. STUDENT SCHEDULE PAGE
+==================================
+
+Create a real schedule system.
+
+Students must see:
+- today's classes
+- weekly schedule
+- lecture times
+- classrooms
+- instructor names
+
+Schedule should combine:
+- Excel imported courses
+- manually created courses
+
+==================================
+5. INSTRUCTOR SCHEDULE PAGE
+==================================
+
+Instructors must see:
+- today's lectures
+- weekly teaching schedule
+- classrooms
+- course details
+
+==================================
+6. QR ATTENDANCE SYSTEM
+==================================
+
+Instructors can:
+- open attendance session
+- generate dynamic QR code
+
+IMPORTANT:
+QR code must automatically regenerate every 2 minutes.
+
+Each QR must:
+- have unique token
+- expire automatically
+- link to correct course session
+
+Students can:
+- scan QR
+- mark attendance
+
+System must:
+- prevent duplicate attendance
+- validate active session
+- save attendance into database
+
+==================================
+7. GPS GEO-FENCING VALIDATION
+==================================
+
+Implement real geo-fencing validation.
+
+Use the REAL Near East University coordinates.
+
+NEAR EAST UNIVERSITY COORDINATES:
+Latitude: 35.2271
+Longitude: 33.3218
+
+Create geo-fence radius validation:
+- allowed radius: 100 meters
+
+When student scans QR:
+- get student GPS location
+- compare with classroom/university location
+- reject attendance if outside radius
+
+Show:
+"Attendance denied: You are outside the lecture area."
+
+==================================
+8. AI SMART FEATURES
+==================================
+
+Implement practical AI-powered attendance analysis.
+
+Detect:
+- suspicious attendance attempts
+- repeated attendance abuse
+- students with low attendance
+- irregular attendance patterns
+
+Generate smart insights like:
+- "Student is at risk of attendance shortage."
+- "Suspicious attendance behavior detected."
+
+==================================
+9. DATABASE TABLES
+==================================
+
+Ensure proper database structure exists:
+
+- users
+- courses
+- enrollments
+- schedules
+- attendance_sessions
+- attendance_records
+
+Create proper relationships between tables.
+
+==================================
+10. IMPORTANT TECHNICAL REQUIREMENTS
+==================================
+
+- Preserve current UI as much as possible
+- Add backend logic professionally
+- Add proper API endpoints
+- Add error handling
+- Add loading states
+- Add toast notifications
+- Ensure all features work end-to-end
+
+==================================
+FINAL RESULT
+==================================
+
+The project should work as a real AI-powered smart university attendance system where:
+
+- Admin uploads Excel schedules
+- Students and instructors search/add courses
+- Schedules appear automatically
+- QR attendance works correctly
+- QR refreshes every 2 minutes
+- GPS validation prevents fake attendance
+- AI analyzes attendance behavior
+- Attendance records save correctly into database

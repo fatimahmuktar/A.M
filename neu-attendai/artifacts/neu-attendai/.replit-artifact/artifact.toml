@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "NEU AttendAI"
+version = "1.0.0"
+id = "artifacts/neu-attendai"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23444
+
+[services.development]
+run = "pnpm --filter neu-attendai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "neu-attendai", "run", "build" ]
+publicDir = "artifacts/neu-attendai/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23444"
+BASE_PATH = "/"

@@ -1,0 +1,10 @@
+﻿.config/
+.agents/
+.cache/
+node_modules/
+__pycache__/
+*.pyc
+.env
+*.log
+.replit
+replit.nix

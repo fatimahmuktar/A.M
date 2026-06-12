@@ -1,0 +1,59 @@
+هذا الـ prompt الكامل لـ Replit:
+
+Update the authentication system for all three user types. Here is the complete login/registration flow:
+STUDENT:
+Registration (one time only):
+	•	Fields: University ID number (e.g. 20225507) + NEU student email (20225507@std.neu.edu.tr) + password + confirm password
+	•	Validate email must end with @std.neu.edu.tr or registration is rejected
+	•	Send 6-digit verification code to their email via Resend API
+	•	Code expires in 10 minutes
+	•	After correct code → create account → auto login → redirect to Student Portal
+	•	Role set automatically as student from email domain
+Daily login:
+	•	Fields: University ID number + password only (no email needed)
+	•	No verification code, no email, nothing extra
+	•	If correct → JWT token → Student Portal
+	•	If wrong → “Incorrect ID or password”
+	•	3 wrong attempts → lock account 15 minutes
+PROFESSOR:
+Registration (one time only):
+	•	Fields: Full name + NEU email (@neu.edu.tr) + password + confirm password
+	•	Validate email must end with @neu.edu.tr
+	•	Send 6-digit verification code to their email via Resend API
+	•	After correct code → create account → auto login → redirect to Professor Portal
+	•	Role set automatically as professor
+Daily login:
+	•	Fields: email + password
+	•	If correct → JWT token → Professor Portal
+ADMIN:
+	•	No registration page for admin
+	•	Admin account is pre-created directly in the database with: email: admin@neu.edu.tr + hashed password
+	•	Login page: email + password only
+	•	If correct → JWT token → Admin Portal
+	•	Admin account cannot be created or modified from the UI for security reasons
+LOGIN PAGE UI:
+	•	Single login page with toggle: “Student” / “Professor & Admin”
+	•	Student tab: shows University ID + password fields
+	•	Professor & Admin tab: shows email + password fields
+	•	“Don’t have an account? Register” link below
+	•	“Forgot password?” link → sends reset code to registered email
+	•	Keep existing dark red/black theme (#1a0a0a background, #e53e3e buttons)
+FORGOT PASSWORD:
+	•	Student: enters University ID → system finds their email → sends reset code
+	•	Professor: enters email → sends reset code
+	•	Reset code expires in 10 minutes
+	•	After correct code → enter new password → redirect to login
+DATABASE:
+
+ALTER TABLE users ADD COLUMN student_number VARCHAR UNIQUE;
+-- student_number filled only for students, NULL for professors and admins
+
+
+SECURITY RULES:
+	•	Passwords minimum 8 characters
+	•	Passwords stored as bcrypt hash only
+	•	JWT token expires after 24 hours
+	•	Email domain strictly validated before sending any verification code
+	•	Admin account protected — cannot be deleted or modified via API
+
+انسخي هذا كاملاً في Replit وسيبني النظام الكامل! 🎯

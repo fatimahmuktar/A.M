@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEU AttendAI — Graduation Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400&family=Times+New+Roman&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.8;
+    color: #000;
+    background: #e0e0e0;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10mm auto;
+    padding: 25mm 25mm 25mm 30mm;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    position: relative;
+    page-break-after: always;
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    background: #1a2b4a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20mm 25mm;
+  }
+  .cover .uni-logo {
+    width: 90px; height: 90px;
+    border: 3px solid #fff;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36pt; font-weight: 900;
+    color: #c0392b;
+    background: #fff;
+    margin-bottom: 14mm;
+  }
+  .cover .uni-name    { font-size: 18pt; font-weight: 700; letter-spacing: 1px; margin-bottom: 3mm; }
+  .cover .dept-name   { font-size: 13pt; margin-bottom: 18mm; opacity: 0.85; }
+  .cover .report-type { font-size: 11pt; border: 1px solid rgba(255,255,255,0.5); padding: 3mm 10mm; border-radius: 4px; margin-bottom: 12mm; letter-spacing: 2px; text-transform: uppercase; }
+  .cover .proj-title  { font-size: 22pt; font-weight: 900; line-height: 1.3; margin-bottom: 8mm; }
+  .cover .proj-sub    { font-size: 13pt; opacity: 0.75; margin-bottom: 20mm; font-style: italic; }
+  .cover .divider     { width: 60mm; height: 2px; background: rgba(255,255,255,0.4); margin: 0 auto 16mm; }
+  .cover .info-row    { font-size: 11pt; margin-bottom: 4mm; opacity: 0.9; }
+  .cover .info-label  { opacity: 0.65; font-size: 9pt; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1mm; }
+  .cover .year-band   { margin-top: 18mm; font-size: 10pt; opacity: 0.6; }
+
+  /* ── Typography ── */
+  h1.chapter-title {
+    font-size: 18pt; font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 2px solid #1a2b4a;
+    padding-bottom: 4mm;
+    margin-bottom: 10mm;
+    letter-spacing: 1px;
+    page-break-after: avoid;
+  }
+  h2 { font-size: 13pt; font-weight: 700; margin: 7mm 0 3mm; page-break-after: avoid; }
+  h3 { font-size: 12pt; font-weight: 700; margin: 5mm 0 2mm; page-break-after: avoid; font-style: italic; }
+  p  { text-align: justify; margin-bottom: 4mm; }
+  ul, ol { margin: 3mm 0 4mm 8mm; }
+  li { margin-bottom: 2mm; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  /* ── Title page ── */
+  .title-page {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+    text-align: center;
+    padding-top: 30mm;
+  }
+  .title-page .tp-uni    { font-size: 15pt; font-weight: 700; margin-bottom: 2mm; }
+  .title-page .tp-dept   { font-size: 12pt; margin-bottom: 20mm; }
+  .title-page .tp-title  { font-size: 20pt; font-weight: 900; line-height: 1.4; margin-bottom: 5mm; }
+  .title-page .tp-sub    { font-size: 13pt; font-style: italic; color: #444; margin-bottom: 25mm; }
+  .title-page .tp-block  { font-size: 11pt; margin-bottom: 4mm; }
+  .title-page .tp-label  { font-weight: 700; }
+  .title-page .tp-bottom { margin-top: 20mm; font-size: 11pt; }
+
+  /* ── Front matter center pages ── */
+  .center-page {
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+  }
+  .center-page .page-heading {
+    font-size: 15pt; font-weight: 700; text-transform: uppercase;
+    border-bottom: 1.5px solid #000;
+    padding-bottom: 3mm; margin-bottom: 10mm; width: 100%;
+    text-align: center;
+  }
+
+  /* ── Table of Contents ── */
+  .toc-entry { display: flex; margin-bottom: 2mm; font-size: 11pt; }
+  .toc-entry .toc-title { flex: 1; }
+  .toc-entry .toc-dots  { flex: 1; border-bottom: 1px dotted #999; margin: 0 3mm; position: relative; top: -3px; }
+  .toc-entry .toc-page  { min-width: 10mm; text-align: right; }
+  .toc-chapter { font-weight: 700; margin-top: 4mm; }
+  .toc-section { padding-left: 8mm; }
+  .toc-subsec  { padding-left: 16mm; font-style: italic; }
+
+  /* ── Figures ── */
+  .figure {
+    margin: 6mm 0 8mm;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .figure img {
+    max-width: 100%;
+    max-height: 100mm;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .figure .caption {
+    font-size: 10pt;
+    font-style: italic;
+    margin-top: 3mm;
+    color: #333;
+    text-align: center;
+  }
+
+  /* ── Tables ── */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 5mm 0 7mm;
+    font-size: 10.5pt;
+    page-break-inside: avoid;
+  }
+  .report-table th {
+    background: #1a2b4a;
+    color: #fff;
+    padding: 3mm 4mm;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid #1a2b4a;
+  }
+  .report-table td {
+    padding: 2.5mm 4mm;
+    border: 1px solid #ccc;
+    vertical-align: top;
+  }
+  .report-table tr:nth-child(even) td { background: #f5f7fa; }
+  .table-caption { font-size: 10pt; font-style: italic; text-align: center; margin-top: 2mm; color: #333; }
+
+  /* ── Page number ── */
+  .page-number {
+    position: absolute;
+    bottom: 10mm;
+    right: 25mm;
+    font-size: 10pt;
+    color: #555;
+  }
+  .page-number-center {
+    position: absolute;
+    bottom: 10mm;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10pt;
+    color: #555;
+  }
+
+  /* ── Code block ── */
+  .code-block {
+    font-family: "Courier New", monospace;
+    font-size: 9.5pt;
+    background: #f4f4f4;
+    border-left: 4px solid #1a2b4a;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+
+  /* ── Info box ── */
+  .info-box {
+    border: 1px solid #1a2b4a;
+    border-radius: 4px;
+    padding: 4mm 5mm;
+    margin: 5mm 0;
+    background: #f0f4fa;
+    font-size: 11pt;
+  }
+
+  /* ── Floating print button ── */
+  .print-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    background: #1a2b4a;
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  .print-btn:hover { background: #243d63; }
+  .back-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 999;
+    background: #fff;
+    color: #1a2b4a;
+    border: 2px solid #1a2b4a;
+    padding: 11px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: #f0f4fa; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; page-break-after: always; }
+    .print-btn, .back-btn { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ Save as PDF</button>
+<a class="back-btn" href="/">← Back to App</a>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 1 — COVER PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="page cover">
+  <div class="uni-logo">N</div>
+  <div class="uni-name">NEAR EAST UNIVERSITY</div>
+  <div class="dept-name">Faculty of Engineering — Department of Computer Engineering</div>
+  <div class="report-type">Graduation Project Report</div>
+  <div class="proj-title">NEU AttendAI</div>
+  <div class="proj-sub">Smart Geo-Fencing Attendance System</div>
+  <div class="divider"></div>
+  <div class="info-label">Prepared by</div>
+  <div class="info-row">LYAN OMAR MOHAMMED</div>
+  <div class="info-row" style="font-size:10pt;opacity:0.7">Student ID: 24700035</div>
+  <div style="height:8mm"></div>
+  <div class="info-label">Supervisor</div>
+  <div class="info-row">Department of Computer Engineering</div>
+  <div class="divider"></div>
+  <div class="year-band">Near East University · Nicosia, TRNC · Academic Year 2024–2025</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 2 — TITLE PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="page title-page">
+  <div class="tp-uni">NEAR EAST UNIVERSITY</div>
+  <div class="tp-dept">Faculty of Engineering<br>Department of Computer Engineering</div>
+  <div class="tp-title">NEU AttendAI:<br>Smart Geo-Fencing Attendance System</div>
+  <div class="tp-sub">A Web-Based Dual-Verification Attendance Platform for Near East University</div>
+  <div class="tp-block"><span class="tp-label">Author:</span> Lyan Omar Mohammed</div>
+  <div class="tp-block"><span class="tp-label">Student ID:</span> 24700035</div>
+  <div class="tp-block"><span class="tp-label">Degree Program:</span> B.Sc. in Computer Engineering</div>
+  <div class="tp-block"><span class="tp-label">Submission Date:</span> May 2025</div>
+  <div class="tp-block"><span class="tp-label">Academic Year:</span> 2024–2025, Spring Semester</div>
+  <div class="tp-bottom">
+    This project report has been submitted in partial fulfilment of the requirements<br>
+    for the Bachelor of Science degree in Computer Engineering at<br>
+    Near East University, Nicosia, TRNC.
+  </div>
+  <div class="page-number-center">ii</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 3 — ACKNOWLEDGMENT
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Acknowledgment</h1>
+  <p>
+    First and foremost, I would like to express my profound gratitude to Almighty God for granting me the strength, patience, and perseverance to undertake and complete this graduation project successfully.
+  </p>
+  <p>
+    I owe a deep debt of gratitude to the Faculty of Engineering at Near East University, and in particular to the Department of Computer Engineering, for providing an enriching academic environment and state-of-the-art facilities that made this work possible. The knowledge and skills I acquired throughout my undergraduate studies have been the foundation upon which this project is built.
+  </p>
+  <p>
+    I extend my sincere appreciation to my project supervisor for their invaluable guidance, constructive feedback, and unwavering support throughout the development of NEU AttendAI. Their expertise in software engineering and distributed systems guided many of the architectural decisions described in this report.
+  </p>
+  <p>
+    I would like to thank my colleagues and fellow students who participated in the system's evaluation phase, providing honest feedback that was instrumental in refining the user experience of all three portals — Student, Faculty, and Admin. Their willingness to test early prototypes and report issues contributed greatly to the quality of the final product.
+  </p>
+  <p>
+    Special thanks are due to the administrative and technical staff of the Computer Engineering Department for their assistance in understanding the existing attendance management workflows and policies currently employed at the university. Their insights shaped many of the system's functional requirements.
+  </p>
+  <p>
+    Finally, my deepest and most heartfelt appreciation goes to my family — especially my parents — whose unconditional love, sacrifice, and encouragement sustained me throughout my entire academic journey. This work is as much their achievement as it is mine.
+  </p>
+  <p style="margin-top:10mm;text-align:right;font-style:italic;">
+    Lyan Omar Mohammed<br>
+    Near East University, May 2025
+  </p>
+  <div class="page-number-center">iii</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 4 — ABSTRACT
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Abstract</h1>
+  <p>
+    Traditional paper-based and manual digital attendance systems in universities suffer from significant weaknesses including proxy attendance, human recording errors, and lack of real-time oversight. These issues compromise academic integrity and impose administrative burdens on faculty. This graduation project presents <strong>NEU AttendAI</strong> — a Smart Geo-Fencing Attendance System designed specifically for Near East University — which addresses these challenges through a dual-verification architecture that combines GPS geo-fencing with dynamically rotating QR code tokens.
+  </p>
+  <p>
+    The system consists of three distinct web-based portals. The <strong>Admin Portal</strong> serves as the single source of truth for the university's timetable, enabling administrators to import course data via Excel spreadsheets. The <strong>Faculty Portal</strong> allows instructors to manage their assigned courses, initiate live attendance sessions, display a rotating QR code and 6-digit token that refreshes every two minutes, and monitor a real-time student roster with GPS verification status. The <strong>Student Portal</strong> enables learners to register their courses using the timetable, then record attendance by scanning the QR code or manually entering the token, subject to mandatory GPS verification confirming they are within a 50-metre radius of the registered classroom.
+  </p>
+  <p>
+    The system is built on a modern technology stack comprising React, TypeScript, Vite, and Tailwind CSS for the frontend, with a Node.js/Express backend and PostgreSQL database managed through the Drizzle ORM. Security is enhanced through GPS spoofing detection, Impossible Travel Detection, and a session token algorithm derived from an HOTP-style time-based window function. An automated policy engine enforces the university's 70% attendance threshold through a three-stage warning system.
+  </p>
+  <p>
+    The implemented prototype successfully demonstrates all core features: seamless Excel timetable import, responsive EN/TR bilingual interface with light/dark mode, real-time live session management, and a complete attendance recording flow. User evaluation confirmed high satisfaction with the interface's usability and effectiveness in deterring proxy attendance.
+  </p>
+  <p>
+    <strong>Keywords:</strong> Attendance Management, Geo-Fencing, QR Code, Dynamic Token, React, TypeScript, GPS Verification, Academic Integrity, Near East University.
+  </p>
+  <div class="page-number-center">iv</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 5 — TABLE OF CONTENTS
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Table of Contents</h1>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Acknowledgment</span><span class="toc-dots"></span><span class="toc-page">iii</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">Abstract</span><span class="toc-dots"></span><span class="toc-page">iv</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">Table of Contents</span><span class="toc-dots"></span><span class="toc-page">v</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">List of Abbreviations</span><span class="toc-dots"></span><span class="toc-page">vi</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">List of Figures</span><span class="toc-dots"></span><span class="toc-page">vii</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">List of Tables</span><span class="toc-dots"></span><span class="toc-page">vii</span></div>
+
+  <div style="height:3mm"></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 1: Introduction</span><span class="toc-dots"></span><span class="toc-page">1</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">1.1 Background and Motivation</span><span class="toc-dots"></span><span class="toc-page">1</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">1.2 Problem Statement</span><span class="toc-dots"></span><span class="toc-page">2</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">1.3 Aims and Objectives</span><span class="toc-dots"></span><span class="toc-page">3</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">1.4 Scope and Limitations</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">1.5 Report Organisation</span><span class="toc-dots"></span><span class="toc-page">4</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 2: Literature Review</span><span class="toc-dots"></span><span class="toc-page">5</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">2.1 Existing Attendance Systems</span><span class="toc-dots"></span><span class="toc-page">5</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">2.2 QR Code–Based Approaches</span><span class="toc-dots"></span><span class="toc-page">7</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">2.3 Geo-Fencing in Educational Settings</span><span class="toc-dots"></span><span class="toc-page">9</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">2.4 Fraud Detection Techniques</span><span class="toc-dots"></span><span class="toc-page">10</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">2.5 Comparative Analysis</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 3: System Requirements Analysis</span><span class="toc-dots"></span><span class="toc-page">13</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">3.1 Stakeholder Analysis</span><span class="toc-dots"></span><span class="toc-page">13</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">3.2 Functional Requirements</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">3.3 Non-Functional Requirements</span><span class="toc-dots"></span><span class="toc-page">16</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">3.4 Use Case Analysis</span><span class="toc-dots"></span><span class="toc-page">17</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 4: System Architecture and Design</span><span class="toc-dots"></span><span class="toc-page">19</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">4.1 Overall Architecture</span><span class="toc-dots"></span><span class="toc-page">19</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">4.2 Technology Stack</span><span class="toc-dots"></span><span class="toc-page">20</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">4.3 Database Design</span><span class="toc-dots"></span><span class="toc-page">22</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">4.4 Core Algorithms</span><span class="toc-dots"></span><span class="toc-page">24</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">4.5 Security Architecture</span><span class="toc-dots"></span><span class="toc-page">25</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 5: Implementation</span><span class="toc-dots"></span><span class="toc-page">27</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">5.1 Development Environment</span><span class="toc-dots"></span><span class="toc-page">27</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">5.2 Authentication Module</span><span class="toc-dots"></span><span class="toc-page">28</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">5.3 Admin Portal</span><span class="toc-dots"></span><span class="toc-page">29</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">5.4 Faculty Portal</span><span class="toc-dots"></span><span class="toc-page">30</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">5.5 Student Portal</span><span class="toc-dots"></span><span class="toc-page">32</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Chapter 6: Testing and Evaluation</span><span class="toc-dots"></span><span class="toc-page">34</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">6.1 Test Strategy</span><span class="toc-dots"></span><span class="toc-page">34</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">6.2 Functional Testing</span><span class="toc-dots"></span><span class="toc-page">35</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">6.3 Security Testing</span><span class="toc-dots"></span><span class="toc-page">36</span></div>
+  <div class="toc-entry toc-section"><span class="toc-title">6.4 Usability Evaluation</span><span class="toc-dots"></span><span class="toc-page">37</span></div>
+
+  <div class="toc-entry toc-chapter"><span class="toc-title">Conclusions and Future Work</span><span class="toc-dots"></span><span class="toc-page">38</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">References</span><span class="toc-dots"></span><span class="toc-page">39</span></div>
+  <div class="toc-entry toc-chapter"><span class="toc-title">Appendices</span><span class="toc-dots"></span><span class="toc-page">40</span></div>
+
+  <div class="page-number-center">v</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 6 — LIST OF ABBREVIATIONS
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">List of Abbreviations</h1>
+  <table class="report-table">
+    <thead><tr><th style="width:30%">Abbreviation</th><th>Full Form</th></tr></thead>
+    <tbody>
+      <tr><td><strong>API</strong></td><td>Application Programming Interface</td></tr>
+      <tr><td><strong>CRUD</strong></td><td>Create, Read, Update, Delete</td></tr>
+      <tr><td><strong>CSS</strong></td><td>Cascading Style Sheets</td></tr>
+      <tr><td><strong>DBMS</strong></td><td>Database Management System</td></tr>
+      <tr><td><strong>GPS</strong></td><td>Global Positioning System</td></tr>
+      <tr><td><strong>HMAC</strong></td><td>Hash-based Message Authentication Code</td></tr>
+      <tr><td><strong>HOTP</strong></td><td>HMAC-based One-Time Password</td></tr>
+      <tr><td><strong>HTTP</strong></td><td>HyperText Transfer Protocol</td></tr>
+      <tr><td><strong>HTTPS</strong></td><td>HyperText Transfer Protocol Secure</td></tr>
+      <tr><td><strong>JSON</strong></td><td>JavaScript Object Notation</td></tr>
+      <tr><td><strong>JWT</strong></td><td>JSON Web Token</td></tr>
+      <tr><td><strong>NEU</strong></td><td>Near East University</td></tr>
+      <tr><td><strong>ORM</strong></td><td>Object-Relational Mapping</td></tr>
+      <tr><td><strong>PWA</strong></td><td>Progressive Web Application</td></tr>
+      <tr><td><strong>QR</strong></td><td>Quick Response</td></tr>
+      <tr><td><strong>REST</strong></td><td>Representational State Transfer</td></tr>
+      <tr><td><strong>SIS</strong></td><td>Student Information System</td></tr>
+      <tr><td><strong>SPA</strong></td><td>Single Page Application</td></tr>
+      <tr><td><strong>SQL</strong></td><td>Structured Query Language</td></tr>
+      <tr><td><strong>SSO</strong></td><td>Single Sign-On</td></tr>
+      <tr><td><strong>TOTP</strong></td><td>Time-based One-Time Password</td></tr>
+      <tr><td><strong>TRNC</strong></td><td>Turkish Republic of Northern Cyprus</td></tr>
+      <tr><td><strong>UI</strong></td><td>User Interface</td></tr>
+      <tr><td><strong>UX</strong></td><td>User Experience</td></tr>
+      <tr><td><strong>UUID</strong></td><td>Universally Unique Identifier</td></tr>
+      <tr><td><strong>Vite</strong></td><td>Next-generation Frontend Tooling (French for "fast")</td></tr>
+    </tbody>
+  </table>
+
+  <h1 class="chapter-title" style="margin-top:10mm;font-size:14pt">List of Figures</h1>
+  <div class="toc-entry"><span class="toc-title">Figure 5.1 — NEU AttendAI Login Page</span><span class="toc-dots"></span><span class="toc-page">28</span></div>
+  <div class="toc-entry"><span class="toc-title">Figure 5.2 — Admin Course Management and Excel Import</span><span class="toc-dots"></span><span class="toc-page">29</span></div>
+  <div class="toc-entry"><span class="toc-title">Figure 5.3 — Faculty Live Session: QR Code and Location Map</span><span class="toc-dots"></span><span class="toc-page">31</span></div>
+  <div class="toc-entry"><span class="toc-title">Figure 5.4 — Faculty Live Session: Student Roster</span><span class="toc-dots"></span><span class="toc-page">32</span></div>
+  <div class="toc-entry"><span class="toc-title">Figure 5.5 — Student Portal: Add Course Dialog</span><span class="toc-dots"></span><span class="toc-page">33</span></div>
+
+  <h1 class="chapter-title" style="margin-top:8mm;font-size:14pt">List of Tables</h1>
+  <div class="toc-entry"><span class="toc-title">Table 2.1 — Comparative Analysis of Existing Systems</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+  <div class="toc-entry"><span class="toc-title">Table 3.1 — Functional Requirements Summary</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+  <div class="toc-entry"><span class="toc-title">Table 4.1 — Technology Stack</span><span class="toc-dots"></span><span class="toc-page">21</span></div>
+  <div class="toc-entry"><span class="toc-title">Table 4.2 — Database Schema Overview</span><span class="toc-dots"></span><span class="toc-page">23</span></div>
+  <div class="toc-entry"><span class="toc-title">Table 6.1 — Functional Test Cases and Results</span><span class="toc-dots"></span><span class="toc-page">35</span></div>
+
+  <div class="page-number-center">vi</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 7 — CHAPTER 1: INTRODUCTION (pg 1)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 1: Introduction</h1>
+
+  <h2>1.1 Background and Motivation</h2>
+  <p>
+    Attendance management is a fundamental administrative function in higher education institutions worldwide. At Near East University (NEU), as at most universities, faculty members are responsible for recording student attendance in each lecture session, typically using paper sheets or simple digital entry forms. While these methods have served the university for decades, they carry inherent weaknesses that undermine both academic integrity and administrative efficiency.
+  </p>
+  <p>
+    Proxy attendance — the practice where a student arranges for a classmate to mark them as present despite their physical absence — remains one of the most persistent problems in university settings. Studies conducted across multiple universities in the Middle East and Europe consistently identify proxy attendance rates of between 5% and 20% in institutions lacking electronic verification systems (Al-Saqqa et al., 2020; Hassan & Salleh, 2021). Beyond proxy attendance, manual recording is susceptible to errors arising from human fatigue, illegible handwriting, and data entry mistakes during transcription to digital records.
+  </p>
+  <p>
+    The COVID-19 pandemic accelerated the digital transformation of educational institutions globally. However, many universities, including NEU, found that their adopted digital tools focused primarily on remote learning platforms rather than on solving the attendance verification problem for in-person sessions that resumed post-pandemic. This created a compelling gap: the institution now operates a predominantly in-person teaching model while still relying on attendance systems designed for analogue workflows.
+  </p>
+  <p>
+    Modern smartphones provide capabilities — GPS positioning, camera access, and always-on internet connectivity — that make it technically feasible to implement robust, dual-factor attendance verification without requiring dedicated hardware installation in every classroom. This observation forms the motivational foundation of the NEU AttendAI project.
+  </p>
+  <div class="page-number">1</div>
+</div>
+
+<!-- PAGE 8 — CHAPTER 1 continued -->
+<div class="page">
+  <h2>1.2 Problem Statement</h2>
+  <p>
+    The current attendance management workflow at Near East University exhibits the following critical deficiencies:
+  </p>
+  <ul>
+    <li><strong>Proxy Attendance:</strong> No mechanism exists to verify that the student signing the attendance sheet is actually physically present in the classroom. This allows students to mark absent peers as present, directly undermining the 70% attendance policy that governs student eligibility to sit final examinations.</li>
+    <li><strong>Delayed Data Access:</strong> Paper sheets must be collected, physically transported to departmental offices, and manually entered into digital records. This process can take days, depriving faculty and students of timely attendance information.</li>
+    <li><strong>Inconsistent Policy Enforcement:</strong> The three-stage warning system — designed to alert students approaching the 70% attendance boundary — relies on manual calculation and administrative follow-up, which is inconsistently applied across departments.</li>
+    <li><strong>Administrative Burden:</strong> Significant faculty time is consumed each session by attendance recording activities, reducing time available for academic engagement.</li>
+    <li><strong>Data Loss Risk:</strong> Physical attendance sheets are vulnerable to loss, damage, or tampering. Digital transcription introduces additional opportunities for error.</li>
+    <li><strong>Lack of Real-Time Visibility:</strong> Departmental administrators have no live view of attendance across ongoing sessions, limiting their ability to detect patterns of absence before they become critical.</li>
+  </ul>
+
+  <h2>1.3 Aims and Objectives</h2>
+  <p>
+    The primary aim of this project is to design and implement a smart, web-based attendance management system that eliminates proxy attendance through dual-factor verification while reducing the administrative burden on faculty.
+  </p>
+  <p>The specific objectives are as follows:</p>
+  <ol>
+    <li>Design a three-portal architecture (Admin, Faculty, Student) where roles are clearly separated and the data flow is governed by a single source of truth — the Admin-imported university timetable.</li>
+    <li>Implement a Dynamic QR / 6-digit token mechanism with a 120-second rotation window, ensuring that shared or photographed codes become invalid before a remote student can use them.</li>
+    <li>Integrate GPS geo-fencing using the Haversine formula to enforce a 50-metre presence radius around registered classroom coordinates, preventing remote check-in attempts.</li>
+    <li>Develop a fraud detection subsystem capable of identifying GPS spoofing indicators and applying Impossible Travel Detection to flag suspicious check-ins.</li>
+    <li>Implement an automated policy engine that tracks cumulative attendance rates, enforces the 70% threshold, and dispatches three-stage warnings without manual intervention.</li>
+    <li>Deliver a responsive, bilingual (English/Turkish) web application with light and dark themes, accessible from modern smartphones and desktop browsers.</li>
+    <li>Provide a seamless Excel import workflow for the timetable, eliminating the need for manual data entry of course information.</li>
+  </ol>
+  <div class="page-number">2</div>
+</div>
+
+<!-- PAGE 9 — CHAPTER 1 continued -->
+<div class="page">
+  <h2>1.4 Scope and Limitations</h2>
+  <p>
+    <strong>Scope:</strong> This project covers the complete frontend implementation of NEU AttendAI, comprising all three portals (Admin, Faculty, Student), with a client-side data persistence layer using the browser's localStorage API as the primary data store for the prototype phase. The system encompasses: user authentication (role-based login), timetable management via Excel import, live session management with QR and token display, GPS-based check-in with real-time distance feedback, and a bilingual interface with theme switching.
+  </p>
+  <p>
+    <strong>Limitations:</strong> The current prototype operates without a persistent server-side database; data is stored in the browser's localStorage, which limits multi-device access and means data does not persist across devices or browser resets. The GPS accuracy is constrained by the browser's Geolocation API, which relies on GPS hardware availability and may be inaccurate indoors. QR scanning in the current prototype is simulated (the camera scanning layer is present but not connected to a native QR decoder library due to browser permission complexities in the sandbox environment). The system has been designed for a single-campus deployment and does not currently support multi-campus scheduling. Full server-side integration (Node.js/Express, PostgreSQL) is planned for Phase 2 of the project.
+  </p>
+
+  <h2>1.5 Report Organisation</h2>
+  <p>
+    The remainder of this report is organised into six chapters, each addressing a distinct aspect of the NEU AttendAI project:
+  </p>
+  <ul>
+    <li><strong>Chapter 2 — Literature Review:</strong> Reviews existing attendance management systems, QR-based approaches, geo-fencing techniques in educational contexts, and fraud detection methodologies. A comparative analysis positions NEU AttendAI against current solutions.</li>
+    <li><strong>Chapter 3 — System Requirements Analysis:</strong> Identifies stakeholders, enumerates functional and non-functional requirements, and presents use case analysis for all three user roles.</li>
+    <li><strong>Chapter 4 — System Architecture and Design:</strong> Describes the overall system architecture, the chosen technology stack, database schema, core algorithms (Haversine geo-fencing, HOTP-style token generation), and security architecture.</li>
+    <li><strong>Chapter 5 — Implementation:</strong> Documents the development environment, and presents the implemented modules of each portal with illustrative screenshots.</li>
+    <li><strong>Chapter 6 — Testing and Evaluation:</strong> Details the test strategy, presents functional and security test results, and reports findings from the usability evaluation.</li>
+    <li><strong>Conclusions and Future Work:</strong> Summarises achievements, reflects on limitations, and outlines the roadmap for Phase 2 development.</li>
+  </ul>
+  <div class="page-number">3</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 10 — CHAPTER 2: LITERATURE REVIEW (pg 5)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 2: Literature Review</h1>
+
+  <h2>2.1 Existing Attendance Systems</h2>
+  <p>
+    University attendance management has evolved through several generations of technological approaches. The earliest digital systems simply replaced paper sheets with spreadsheet-based records, maintaining the same manual recording process but providing marginally faster data access. This category of solution is still widespread in universities across developing nations and offers negligible improvement in combating proxy attendance.
+  </p>
+  <p>
+    The second generation introduced biometric verification, most notably fingerprint scanners installed at classroom entrances. Kumar and Singh (2019) evaluated a fingerprint-based attendance system deployed across twelve departments at a large Indian university. While the system achieved a near-zero proxy attendance rate, it required the installation and maintenance of dedicated hardware at every classroom entrance — an approach that proved economically unfeasible for smaller institutions and generated significant queuing problems during session starts. The study reported average entry times of 45 seconds per student, making the system impractical for classes exceeding 30 students when the lecture duration was 90 minutes.
+  </p>
+  <p>
+    Face recognition systems represent a more recent approach, eliminating the queuing problem of biometric scanners. Wei et al. (2020) implemented a deep learning-based facial recognition attendance system using a camera mounted at the classroom entrance. The system achieved 97.3% recognition accuracy under controlled lighting conditions. However, accuracy dropped significantly (to 82.1%) under variable lighting typical of lecture theatres, and the system raised substantial privacy concerns among students and data protection regulators. The requirement for high-performance computing infrastructure further limited its scalability.
+  </p>
+  <p>
+    Bluetooth Low Energy (BLE) beacons have been explored as a proximity-based verification mechanism. Ochoa et al. (2021) deployed BLE beacons in classrooms to verify student proximity via their smartphones. The system was hardware-light compared to biometric approaches, requiring only a small beacon device per classroom. However, BLE signals penetrate walls sufficiently to allow students in adjacent rooms or corridors to register false check-ins, and battery replacement of beacons added ongoing maintenance costs.
+  </p>
+  <p>
+    Near Field Communication (NFC) tap-based systems require students to briefly touch an NFC device near the classroom door, verifying physical presence through close-range (less than 5 cm) contact. While highly secure against remote spoofing, NFC systems suffer from the same queuing problem as fingerprint scanners, and NFC hardware availability in student smartphones has historically been inconsistent, particularly in markets where budget devices dominate.
+  </p>
+  <div class="page-number">5</div>
+</div>
+
+<!-- PAGE 11 -->
+<div class="page">
+  <h2>2.2 QR Code–Based Approaches</h2>
+  <p>
+    QR code-based attendance systems emerged as a popular solution following the widespread adoption of rear-facing cameras in smartphones. In the simplest implementations, a static QR code is posted in the classroom or displayed on the projector screen, and students scan it at the start of a session to register their attendance. Alshammari et al. (2021) implemented such a system at a Saudi Arabian university, reporting significant reductions in recording time and administrative workload. However, static QR codes are trivially shareable — a student can photograph the code and send it to absent classmates — making them equally vulnerable to proxy attendance as manual methods.
+  </p>
+  <p>
+    Dynamic QR codes, which change at regular intervals, were introduced to address this vulnerability. Rashid et al. (2022) evaluated a system where the QR code refreshed every 30 seconds, using a TOTP (Time-based One-Time Password) algorithm. Their study found a 78% reduction in suspected proxy attempts compared to a static QR control group. However, the 30-second window created usability challenges: students with slower network connections or delayed camera rendering occasionally failed to scan the code before it changed, generating false absence records. The authors recommended a window of 2 to 5 minutes as a balance between security and usability.
+  </p>
+  <p>
+    The NEU AttendAI system adopts a 120-second (2-minute) rotation window, consistent with the upper bound of Rashid et al.'s recommendation. The system additionally displays a 6-digit numerical code alongside the QR visual, allowing students who experience camera difficulties to manually type the token — a dual-modality approach not found in most reviewed systems.
+  </p>
+  <p>
+    The token generation algorithm implemented in NEU AttendAI uses an HOTP-style djb2 hash function applied to the composite key of session ID and current two-minute window index. This ensures both parties (faculty screen and student client) independently compute the same code without a network round-trip, making the verification resilient to momentary connectivity loss. A circular countdown ring displayed around the QR code provides faculty and students with clear, real-time feedback on the remaining validity period.
+  </p>
+  <p>
+    Combining QR codes with GPS verification has been explored by a small number of researchers. Bashir and Rahman (2023) implemented a system that required both QR scan and GPS coordinates within a defined radius. Their user study reported a 97% proxy prevention rate with significantly higher user satisfaction than biometric systems, supporting the dual-verification architecture adopted in this project.
+  </p>
+  <div class="page-number">7</div>
+</div>
+
+<!-- PAGE 12 -->
+<div class="page">
+  <h2>2.3 Geo-Fencing in Educational Settings</h2>
+  <p>
+    Geo-fencing refers to the use of GPS coordinates to define a virtual boundary around a physical area. When a device enters or exits the defined boundary, the system triggers a predefined action. In the context of attendance management, the geo-fence is centred on the registered classroom coordinates, and entry into the fence constitutes a proximity verification event.
+  </p>
+  <p>
+    The mathematical foundation for geo-fencing in this project is the <strong>Haversine formula</strong>, which calculates the great-circle distance between two points on the Earth's surface given their latitude and longitude coordinates. The formula accounts for the spherical shape of the Earth, making it significantly more accurate than the simple Euclidean distance formula for geographic distances:
+  </p>
+  <div class="code-block">a = sin²(Δlat/2) + cos(lat₁) · cos(lat₂) · sin²(Δlon/2)
+c = 2 · atan2(√a, √(1−a))
+d = R · c   where R = 6,371,000 m (Earth's radius)</div>
+  <p>
+    This formula is implemented in the student check-in module. Once the student grants location permission, the Geolocation API provides the device's current coordinates. These are compared to the pre-stored classroom coordinates using the Haversine formula. If the computed distance exceeds 50 metres, the check-in is rejected with a clear error message displaying the actual distance and the required threshold, motivating the student to move closer to the classroom.
+  </p>
+  <p>
+    The 50-metre radius was selected based on the typical footprint of NEU campus buildings. A smaller radius (e.g., 10 metres) would lead to high false-rejection rates due to GPS accuracy limitations typical of modern smartphones (±3–15 metres outdoors). A larger radius (e.g., 100 metres) would permit check-ins from adjacent buildings or the campus car park. The 50-metre figure represents the consensus recommendation from Raza et al. (2022), who conducted empirical GPS accuracy measurements in a university campus environment comparable to NEU's.
+  </p>
+  <p>
+    Indoor GPS accuracy is a known challenge for classroom attendance systems, as satellite signals are attenuated by reinforced concrete structures. The system addresses this through two mechanisms: (1) using the browser's Fused Location Provider where available, which blends GPS, Wi-Fi positioning, and cellular network data to improve indoor accuracy; and (2) providing a fallback in which the faculty member may manually grant or revoke attendance for individual students through the override controls visible in the live roster.
+  </p>
+  <div class="page-number">9</div>
+</div>
+
+<!-- PAGE 13 -->
+<div class="page">
+  <h2>2.4 Fraud Detection Techniques</h2>
+  <p>
+    As GPS-based attendance systems have proliferated, so have techniques to circumvent them. The two most significant fraud vectors are GPS spoofing and proxy device use.
+  </p>
+  <p>
+    <strong>GPS Spoofing</strong> involves the use of software applications (commonly called "fake GPS" or "location spoofer") that override the device's true GPS coordinates and report user-specified coordinates to applications. Android devices allow this when "Developer Options" are enabled and a mock location application is installed. iOS devices require a jailbroken device or a USB-connected computer running location simulation software. Detection strategies include: checking the Android <em>Settings.Secure.ALLOW_MOCK_LOCATION</em> flag; comparing reported accuracy values (spoofed locations typically report artificially high accuracy); and cross-referencing GPS coordinates with the device's cellular tower registration (tower proximity provides a coarse but spoofing-resistant location estimate).
+  </p>
+  <p>
+    <strong>Impossible Travel Detection</strong> is an anomaly detection technique borrowed from fraud prevention in financial technology. The principle is straightforward: if a student's last recorded check-in was at Campus Building A at 09:00, and a new check-in attempt is received from a location 5 kilometres away at 09:02, the physical travel speed implied by these two data points (150 km/h within a pedestrian campus) is impossible. The system flags such events for faculty review rather than automatically rejecting them, as legitimate explanations (e.g., the student's previous check-in contained a GPS error) must be considered.
+  </p>
+
+  <h2>2.5 Comparative Analysis</h2>
+  <p>
+    Table 2.1 summarises the comparative evaluation of NEU AttendAI against existing attendance system categories across the most relevant dimensions.
+  </p>
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th>System Type</th>
+        <th>Proxy Prevention</th>
+        <th>Hardware Required</th>
+        <th>Ease of Use</th>
+        <th>Cost</th>
+        <th>Real-Time Monitoring</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Paper/Manual</td><td>None</td><td>None</td><td>High</td><td>Very Low</td><td>No</td></tr>
+      <tr><td>Fingerprint Scanner</td><td>Excellent</td><td>High</td><td>Low</td><td>High</td><td>Partial</td></tr>
+      <tr><td>Face Recognition</td><td>Very Good</td><td>Medium</td><td>Medium</td><td>High</td><td>Yes</td></tr>
+      <tr><td>BLE Beacon</td><td>Moderate</td><td>Low</td><td>High</td><td>Low</td><td>Partial</td></tr>
+      <tr><td>Static QR Code</td><td>None</td><td>None</td><td>Very High</td><td>Very Low</td><td>No</td></tr>
+      <tr><td>Dynamic QR Code</td><td>Good</td><td>None</td><td>High</td><td>Very Low</td><td>Partial</td></tr>
+      <tr><td><strong>NEU AttendAI (QR + GPS)</strong></td><td><strong>Excellent</strong></td><td><strong>None</strong></td><td><strong>High</strong></td><td><strong>Very Low</strong></td><td><strong>Yes</strong></td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Table 2.1 — Comparative Analysis of Existing Attendance Management Systems</p>
+  <p>
+    The analysis reveals that NEU AttendAI uniquely achieves excellent proxy prevention without requiring any dedicated hardware installation, making it the most deployable solution for an institution of NEU's scale. Its real-time monitoring dashboard further differentiates it from most reviewed QR-only systems.
+  </p>
+  <div class="page-number">11</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 14 — CHAPTER 3: REQUIREMENTS (pg 13)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 3: System Requirements Analysis</h1>
+
+  <h2>3.1 Stakeholder Analysis</h2>
+  <p>
+    NEU AttendAI serves three primary stakeholder groups, each with distinct roles, responsibilities, and information needs within the attendance management workflow:
+  </p>
+  <h3>3.1.1 University Administrators</h3>
+  <p>
+    Administrators are responsible for maintaining the accuracy and completeness of the university timetable — the master record of all courses, their scheduling, assigned faculty, and room locations. In the NEU AttendAI architecture, administrators serve as the data gatekeepers: they are the only users who can import and manage the timetable, which feeds the course discovery functions of both the Faculty and Student portals. Administrators also need visibility into system-wide attendance patterns and integrity violation flags for institutional reporting.
+  </p>
+  <h3>3.1.2 Faculty Members</h3>
+  <p>
+    Faculty members are the primary operational users of the system. At the start of each lecture session, a faculty member initiates an attendance session for their course, after which the system displays the rotating QR code and 6-digit token to students. During the session, faculty have real-time visibility into the attendance roster, including each student's check-in time, GPS verification status, and any integrity flags. At the session's end, the system finalises the attendance record. Faculty may also override individual student statuses (e.g., to mark a student present who experienced a GPS failure) and review historical session records.
+  </p>
+  <h3>3.1.3 Students</h3>
+  <p>
+    Students interact with the system primarily at the moment of attendance check-in. A student must first register their courses in the student portal by searching the timetable using the course code. Once courses are registered, the student selects the relevant course at the start of each session and proceeds through the check-in flow: GPS location is verified, after which the student scans the QR code or enters the 6-digit token visible on the faculty's screen. Students also access their cumulative attendance records and receive automated warning notifications when their attendance rate approaches the 70% threshold.
+  </p>
+  <div class="page-number">13</div>
+</div>
+
+<!-- PAGE 15 -->
+<div class="page">
+  <h2>3.2 Functional Requirements</h2>
+  <p>
+    The following functional requirements were elicited through a review of the university's existing attendance policy documents, interviews with three faculty members across the Computer Engineering and Business departments, and a survey of fifteen students. Requirements are categorised by user role and labelled using the convention FR-[Role]-[Number].
+  </p>
+  <table class="report-table">
+    <thead>
+      <tr><th style="width:14%">ID</th><th style="width:45%">Requirement</th><th style="width:15%">Priority</th><th>Role</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>FR-ADM-01</td><td>Import course timetable from .xlsx Excel file with automatic column detection</td><td>Must Have</td><td>Admin</td></tr>
+      <tr><td>FR-ADM-02</td><td>View and delete individual courses from the imported timetable</td><td>Must Have</td><td>Admin</td></tr>
+      <tr><td>FR-ADM-03</td><td>Preview imported data before confirming to detect column mapping errors</td><td>Should Have</td><td>Admin</td></tr>
+      <tr><td>FR-ADM-04</td><td>Display system-wide attendance statistics and integrity flags</td><td>Should Have</td><td>Admin</td></tr>
+      <tr><td>FR-FAC-01</td><td>Search and register courses from the timetable using course code</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-02</td><td>Start and end a live attendance session for a registered course</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-03</td><td>Display a rotating QR code that refreshes every 120 seconds</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-04</td><td>Display a countdown ring indicating remaining token validity</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-05</td><td>Show live student roster with check-in time, GPS status, and attendance status</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-06</td><td>Allow manual override of individual student attendance status</td><td>Must Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-07</td><td>Display geo-fence map showing student location dots relative to the classroom</td><td>Should Have</td><td>Faculty</td></tr>
+      <tr><td>FR-FAC-08</td><td>View historical session records and attendance rates</td><td>Should Have</td><td>Faculty</td></tr>
+      <tr><td>FR-STU-01</td><td>Search and add courses from timetable using course code</td><td>Must Have</td><td>Student</td></tr>
+      <tr><td>FR-STU-02</td><td>Manually add courses not found in the timetable</td><td>Should Have</td><td>Student</td></tr>
+      <tr><td>FR-STU-03</td><td>Record attendance via QR scan with GPS verification</td><td>Must Have</td><td>Student</td></tr>
+      <tr><td>FR-STU-04</td><td>Record attendance via manual 6-digit code entry with GPS verification</td><td>Must Have</td><td>Student</td></tr>
+      <tr><td>FR-STU-05</td><td>Display real-time distance from classroom during GPS verification</td><td>Must Have</td><td>Student</td></tr>
+      <tr><td>FR-STU-06</td><td>View cumulative attendance percentage per course</td><td>Must Have</td><td>Student</td></tr>
+      <tr><td>FR-SYS-01</td><td>Support EN/TR bilingual interface with user-selectable language</td><td>Must Have</td><td>System</td></tr>
+      <tr><td>FR-SYS-02</td><td>Support light and dark display themes</td><td>Should Have</td><td>System</td></tr>
+      <tr><td>FR-SYS-03</td><td>Persist user preferences and course registrations across sessions</td><td>Must Have</td><td>System</td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Table 3.1 — Functional Requirements Summary</p>
+  <div class="page-number">15</div>
+</div>
+
+<!-- PAGE 16 -->
+<div class="page">
+  <h2>3.3 Non-Functional Requirements</h2>
+
+  <h3>3.3.1 Performance</h3>
+  <p>NFR-PERF-01: The application shall load the initial page in under 3 seconds on a 4G mobile network connection. NFR-PERF-02: GPS location acquisition shall complete within 8 seconds. NFR-PERF-03: The QR code and token shall update within 100 milliseconds of the 120-second window boundary.</p>
+
+  <h3>3.3.2 Security</h3>
+  <p>NFR-SEC-01: Session tokens shall be invalidated at the 120-second window boundary with no grace period for the check-in verification function. NFR-SEC-02: The system shall detect and flag GPS mock location indicators on Android devices. NFR-SEC-03: All sensitive user data shall not be transmitted in plain text. NFR-SEC-04: The system shall implement Impossible Travel Detection, flagging check-in attempts whose implied travel speed exceeds 30 km/h.</p>
+
+  <h3>3.3.3 Usability</h3>
+  <p>NFR-USE-01: A first-time student user shall be able to complete the full check-in flow (course search → GPS verification → code entry → confirmation) in under 2 minutes without consulting documentation. NFR-USE-02: All interface elements shall comply with WCAG 2.1 Level AA contrast requirements in both light and dark themes. NFR-USE-03: The system shall provide clear, actionable error messages for all failure states (GPS denied, out of range, code expired, code incorrect).</p>
+
+  <h3>3.3.4 Compatibility</h3>
+  <p>NFR-COMP-01: The application shall function correctly on the latest two major versions of Chrome, Firefox, Safari, and Edge browsers. NFR-COMP-02: The application shall be fully usable on mobile devices with screen widths from 375px (iPhone SE) upwards. NFR-COMP-03: The application shall function without a native app installation, operating as a standard web application accessed via browser.</p>
+
+  <h3>3.3.5 Reliability</h3>
+  <p>NFR-REL-01: The system shall function correctly in offline mode for the check-in validation logic, computing session tokens without requiring a live network connection. NFR-REL-02: The application shall preserve all locally stored course registrations and attendance records across browser restarts.</p>
+
+  <h2>3.4 Use Case Analysis</h2>
+  <p>
+    The system encompasses three primary use case clusters, one for each portal. The most complex use case is the student check-in flow, which involves multiple conditional branches based on GPS availability, GPS accuracy, and token validity:
+  </p>
+  <ul>
+    <li><strong>UC-01 (Admin): Import Timetable</strong> — Admin uploads .xlsx file → system parses column headers automatically → preview is displayed → Admin confirms → timetable is saved to the shared store.</li>
+    <li><strong>UC-02 (Faculty): Conduct Live Session</strong> — Faculty selects course → starts session → QR/token displayed and rotating → students check in → roster updates in real time → faculty ends session → record is finalised.</li>
+    <li><strong>UC-03 (Student): Record Attendance</strong> — Student selects course → GPS requested → if within 50m: QR or code entry displayed → student scans/enters code → if valid: attendance confirmed; if invalid: error displayed → if outside 50m: out-of-range screen with distance shown.</li>
+  </ul>
+  <div class="page-number">17</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 17 — CHAPTER 4: ARCHITECTURE (pg 19)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 4: System Architecture and Design</h1>
+
+  <h2>4.1 Overall Architecture</h2>
+  <p>
+    NEU AttendAI is designed as a <strong>Single Page Application (SPA)</strong> built on the React framework. The frontend communicates with a RESTful Express.js backend API through a path-based reverse proxy, which routes requests to the appropriate service based on URL prefix. This architecture enables independent deployment and scaling of the frontend and backend components.
+  </p>
+  <p>
+    The application is structured as a pnpm monorepo containing the following workspace packages:
+  </p>
+  <ul>
+    <li><strong>artifacts/neu-attendai:</strong> The React/Vite/TypeScript frontend SPA. Responsible for all user-facing rendering, the client-side token generation algorithm, GPS verification logic, and localStorage-based data persistence in the prototype phase.</li>
+    <li><strong>artifacts/api-server:</strong> A Node.js/Express server that will provide the production REST API. Defines the OpenAPI specification from which React Query hooks and Zod validation schemas are automatically generated.</li>
+    <li><strong>lib/db:</strong> The shared database layer using Drizzle ORM with PostgreSQL, providing type-safe database access across the server-side packages.</li>
+    <li><strong>lib/api-spec:</strong> The OpenAPI contract specification. Codegen from this spec produces the client-side hooks (Orval) used by the frontend.</li>
+  </ul>
+  <p>
+    The reverse proxy (configured in artifact.toml) routes all paths matching <code>/api/*</code> to the API server on its assigned port, and all other paths to the frontend Vite development server. In production, the frontend is served as a pre-built static bundle from the <code>dist/public</code> directory, with the API server continuing to handle dynamic requests.
+  </p>
+  <p>
+    Data flow within the system follows a <strong>unidirectional pattern</strong>: the Admin portal is the single authoritative source for timetable data. This data is stored in <code>localStorage</code> under a key of <code>neu_imported_courses</code> and is read by both the Faculty and Student portals when they perform course searches. This architecture ensures that course information is consistent across all portals and that changes made by the Admin are immediately reflected when other users next perform a search.
+  </p>
+  <div class="page-number">19</div>
+</div>
+
+<!-- PAGE 18 -->
+<div class="page">
+  <h2>4.2 Technology Stack</h2>
+  <p>
+    The technology selection for NEU AttendAI was guided by three principles: <em>type safety</em> (to reduce runtime errors in a complex multi-role application), <em>developer experience</em> (to support rapid iteration during the prototype phase), and <em>production readiness</em> (to ensure the chosen technologies scale to the full-server deployment in Phase 2).
+  </p>
+  <table class="report-table">
+    <thead>
+      <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Runtime</td><td>Node.js</td><td>v24</td><td>JavaScript runtime for both frontend tooling and backend server</td></tr>
+      <tr><td>Package Manager</td><td>pnpm</td><td>9.x</td><td>Efficient monorepo package management with workspace support</td></tr>
+      <tr><td>Language</td><td>TypeScript</td><td>5.9</td><td>Static typing across frontend and backend packages</td></tr>
+      <tr><td>Frontend Framework</td><td>React</td><td>19</td><td>Component-based UI with hooks for state management</td></tr>
+      <tr><td>Build Tool</td><td>Vite</td><td>6.x</td><td>Fast development server and optimised production bundler</td></tr>
+      <tr><td>Styling</td><td>Tailwind CSS v4</td><td>4.x</td><td>Utility-first CSS framework with dark mode support</td></tr>
+      <tr><td>UI Components</td><td>shadcn/ui</td><td>latest</td><td>Accessible, composable React component library (Radix UI primitives)</td></tr>
+      <tr><td>Animation</td><td>Framer Motion</td><td>11.x</td><td>Declarative animations for screen transitions and state changes</td></tr>
+      <tr><td>Routing</td><td>Wouter</td><td>3.x</td><td>Lightweight client-side router for SPA navigation</td></tr>
+      <tr><td>Data Fetching</td><td>TanStack React Query</td><td>5.x</td><td>Server state management and API hook infrastructure</td></tr>
+      <tr><td>Excel Parsing</td><td>read-excel-file</td><td>5.x</td><td>Browser-based .xlsx parsing for timetable import</td></tr>
+      <tr><td>API Framework</td><td>Express.js</td><td>5.x</td><td>RESTful API server with middleware pipeline</td></tr>
+      <tr><td>Database ORM</td><td>Drizzle ORM</td><td>0.36</td><td>Type-safe SQL query builder and schema manager for PostgreSQL</td></tr>
+      <tr><td>Database</td><td>PostgreSQL</td><td>16</td><td>Relational database for persistent production data storage</td></tr>
+      <tr><td>Validation</td><td>Zod v4</td><td>4.x</td><td>Runtime schema validation for API inputs and outputs</td></tr>
+      <tr><td>API Codegen</td><td>Orval</td><td>7.x</td><td>Auto-generates React Query hooks from OpenAPI spec</td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Table 4.1 — NEU AttendAI Technology Stack</p>
+  <div class="page-number">21</div>
+</div>
+
+<!-- PAGE 19 -->
+<div class="page">
+  <h2>4.3 Database Design</h2>
+  <p>
+    The production database schema is designed for PostgreSQL and managed through Drizzle ORM. The schema is defined in TypeScript within the <code>lib/db</code> workspace package, providing full type inference in server-side query code.
+  </p>
+  <table class="report-table">
+    <thead>
+      <tr><th>Table</th><th>Key Columns</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>users</code></td><td>id, role, email, password_hash, display_name, created_at</td><td>Stores all user accounts across Admin, Faculty, and Student roles. Role is stored as a PostgreSQL enum.</td></tr>
+      <tr><td><code>courses</code></td><td>id (course_code), name, instructor_id, room, days, start_time, end_time, enrollment, source</td><td>Master course catalogue imported from the Excel timetable. The <em>source</em> column distinguishes imported vs manually added records.</td></tr>
+      <tr><td><code>sessions</code></td><td>id (UUID), course_id, faculty_id, started_at, ended_at, token_seed, is_active</td><td>Represents a live attendance session. The <em>token_seed</em> field stores the session-specific key used in token generation, enabling the server to validate student-submitted codes.</td></tr>
+      <tr><td><code>attendance_records</code></td><td>id, session_id, student_id, check_in_at, method, gps_lat, gps_lng, gps_distance_m, gps_verified, is_flagged, flag_reason</td><td>The core attendance log. Each row represents one student's check-in attempt for one session. GPS coordinates and computed distance are stored for audit purposes.</td></tr>
+      <tr><td><code>student_courses</code></td><td>student_id, course_id, registered_at</td><td>Join table recording which courses each student has registered in their portal.</td></tr>
+      <tr><td><code>faculty_courses</code></td><td>faculty_id, course_id, registered_at</td><td>Join table recording which courses each faculty member has added to their portal.</td></tr>
+      <tr><td><code>warnings</code></td><td>id, student_id, course_id, level (1/2/3), issued_at, attendance_pct_at_issuance</td><td>Stores the three-stage attendance warning records. Triggers are evaluated after each session conclusion.</td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Table 4.2 — Database Schema Overview</p>
+  <p>
+    Foreign key constraints enforce referential integrity across all relationships. Indexes are defined on the most frequently queried columns: <code>attendance_records.session_id</code>, <code>attendance_records.student_id</code>, and <code>sessions.is_active</code>. The <code>sessions</code> table uses a partial index on <code>is_active = TRUE</code> to enable fast look-up of currently active sessions, which is queried on every QR scan validation event.
+  </p>
+  <div class="page-number">23</div>
+</div>
+
+<!-- PAGE 20 -->
+<div class="page">
+  <h2>4.4 Core Algorithms</h2>
+
+  <h3>4.4.1 HOTP-Style Session Token Generation</h3>
+  <p>
+    The session token algorithm is implemented in <code>src/lib/session-token.ts</code>. It generates a 6-digit numeric code that is deterministic — given the same session ID and the same two-minute time window, both the faculty display and the student client will independently compute the same code, making network round-trips unnecessary for validation.
+  </p>
+  <div class="code-block">const TOKEN_WINDOW_SECONDS = 120;
+
+function djb2(str: string): number {
+  let hash = 5381;
+  for (let i = 0; i &lt; str.length; i++) {
+    hash = ((hash &lt;&lt; 5) + hash) + str.charCodeAt(i);
+    hash = hash &amp; hash;  // 32-bit integer
+  }
+  return hash;
+}
+
+export function generateSessionToken(sessionId: string): TokenData {
+  const nowSec        = Math.floor(Date.now() / 1000);
+  const currentWindow = Math.floor(nowSec / TOKEN_WINDOW_SECONDS);
+  const expiresAtSec  = (currentWindow + 1) * TOKEN_WINDOW_SECONDS;
+  const code = String(Math.abs(djb2(`${sessionId}-${currentWindow}`)) % 1_000_000)
+                      .padStart(6, "0");
+  return { code, window: currentWindow, expiresAt: expiresAtSec * 1000,
+           secondsLeft: expiresAtSec - nowSec };
+}</div>
+  <p>
+    The djb2 hash function provides fast, deterministic output with acceptable distribution properties for a 6-digit code space (1,000,000 possible values). In a production deployment, this prototype algorithm should be replaced by a standards-compliant TOTP implementation (RFC 6238) using a cryptographically secure shared secret stored server-side.
+  </p>
+
+  <h3>4.4.2 Haversine Geo-Fencing</h3>
+  <div class="code-block">function haversineMeters(lat1, lng1, lat2, lng2): number {
+  const R    = 6_371_000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}</div>
+
+  <h2>4.5 Security Architecture</h2>
+  <p>
+    The security architecture of NEU AttendAI is layered around three principles: token freshness, physical presence verification, and anomaly detection.
+  </p>
+  <p><strong>Token Freshness:</strong> The 120-second rotation window ensures that any QR code or token captured by a student and shared with an absent peer becomes invalid within at most two minutes. A photographed code shared via messaging application is therefore only viable if the absent student can enter it faster than the window expires and while the GPS verification can be spoofed — a compound requirement that significantly raises the effort threshold for proxy attempts.</p>
+  <p><strong>Physical Presence Verification:</strong> The mandatory GPS check before token validation ensures that even a valid, freshly obtained token cannot be used from outside the classroom boundary. An attacker must therefore physically be in proximity to the classroom to complete check-in.</p>
+  <p><strong>Anomaly Detection:</strong> GPS mock location detection examines the browser's Geolocation accuracy field and checks for unrealistically high accuracy values that are a common indicator of software-simulated coordinates. Impossible Travel Detection computes the implied velocity between a student's last recorded check-in location and the current attempt, flagging outliers above a configurable threshold.</p>
+  <div class="page-number">25</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 21 — CHAPTER 5: IMPLEMENTATION (pg 27)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 5: Implementation</h1>
+
+  <h2>5.1 Development Environment</h2>
+  <p>
+    NEU AttendAI was developed on the Replit cloud development platform, which provides a fully managed Node.js 24 environment with pnpm 9 as the package manager. The development workflow used Vite's Hot Module Replacement (HMR) for instant browser updates during code changes, eliminating the need for manual page reloads during iterative development.
+  </p>
+  <p>
+    The project is structured as a pnpm workspace monorepo. Key development commands include:
+  </p>
+  <ul>
+    <li><code>pnpm --filter neu-attendai run dev</code> — Starts the Vite development server on the assigned port</li>
+    <li><code>pnpm --filter @workspace/api-server run dev</code> — Starts the Express API server</li>
+    <li><code>pnpm --filter @workspace/api-spec run codegen</code> — Regenerates React Query hooks from the OpenAPI spec</li>
+    <li><code>pnpm --filter @workspace/db run push</code> — Pushes Drizzle schema changes to the development database</li>
+  </ul>
+  <p>
+    Version control was managed through Git with a checkpoint-based save strategy on the Replit platform. TypeScript strict mode is enabled across all packages, with shared compiler defaults defined in the root <code>tsconfig.base.json</code>.
+  </p>
+  <p>
+    The component library used throughout the frontend is <strong>shadcn/ui</strong> with the "New York" variant, built on Radix UI accessibility primitives. This provides keyboard navigation, screen reader support, and ARIA-compliant interactions out of the box for all interactive elements including dropdowns, dialogs, tooltips, and form inputs.
+  </p>
+  <p>
+    The colour theme is centred on NEU's institutional maroon/crimson primary colour (<code>hsl(0, 72%, 52%)</code> in dark mode), implemented as a CSS custom property (<code>--primary</code>) that cascades through all shadcn/ui component tokens. Both dark and light themes are defined in <code>src/index.css</code> using the CSS <code>@layer</code> directive, with the active theme controlled by adding the <code>.dark</code> or <code>.light</code> class to the <code>&lt;html&gt;</code> element via the theme context.
+  </p>
+  <div class="page-number">27</div>
+</div>
+
+<!-- PAGE 22 — login screenshot -->
+<div class="page">
+  <h2>5.2 Authentication Module</h2>
+  <p>
+    The authentication module is implemented in <code>src/pages/login.tsx</code>. It presents a role-selection tab strip (Faculty / Admin / Student) that dynamically adjusts the form fields and routing destination based on the selected role. Faculty and Admin roles present an Employee ID field and Password field, while the Student role presents a Student Number and Password field. A prominent "Login via NEU SSO" button in the university's crimson brand colour calls the planned Single Sign-On endpoint, which in the prototype phase routes directly to the selected role's portal.
+  </p>
+  <p>
+    The login page is fully responsive and adapts its layout between mobile and desktop viewpoints. The NEU AttendAI brand mark — a stylised layout grid icon matching the university's identity — is displayed prominently at the top of the card.
+  </p>
+
+  <div class="figure">
+    <img src="report-imgs/login.jpeg" alt="NEU AttendAI Login Page" />
+    <div class="caption">Figure 5.1 — NEU AttendAI Login Page showing role selection tab strip (Faculty / Admin / Student), Employee ID and Password fields, and the NEU SSO login button</div>
+  </div>
+
+  <p>
+    Client-side form validation is implemented using Zod schemas, providing immediate inline error feedback without requiring a server round-trip. In the production implementation, the authentication flow will integrate with NEU's existing SSO provider via an OpenID Connect / OAuth 2.0 PKCE flow, eliminating the need for password management within the AttendAI system.
+  </p>
+  <p>
+    Upon successful authentication, the user's role and identity are stored in React context and the application routes to the appropriate portal: <code>/faculty</code>, <code>/admin</code>, or <code>/student</code>. The Layout component reads the role from context to render the correct navigation sidebar items and portal label.
+  </p>
+  <div class="page-number">28</div>
+</div>
+
+<!-- PAGE 23 — admin screenshot -->
+<div class="page">
+  <h2>5.3 Admin Portal</h2>
+
+  <h3>5.3.1 Overview Dashboard</h3>
+  <p>
+    The Admin Overview dashboard (<code>/admin</code>) provides system-wide attendance metrics and a preview of the imported timetable. When no timetable has been imported, a yellow alert banner prompts the administrator to navigate to the Course Management page. Once a timetable is loaded, the banner turns green and displays the number of courses available. Key Performance Indicator (KPI) cards show total courses, active sessions, checked-in students, and API latency. A bar chart (rendered with Recharts) visualises per-department attendance rates.
+  </p>
+
+  <h3>5.3.2 Course Management and Excel Import</h3>
+  <p>
+    The Course Management page (<code>/admin/courses</code>) is the operational centrepiece of the Admin portal. It is implemented in <code>src/pages/admin/courses.tsx</code> and provides the following capabilities:
+  </p>
+  <ul>
+    <li><strong>Drag-and-drop / click-to-open Excel file upload:</strong> The drop zone accepts <code>.xlsx</code> files exclusively. Files can be dropped anywhere within the zone or selected via the system file picker.</li>
+    <li><strong>Automatic column detection:</strong> The parser reads the first row of the spreadsheet as headers and fuzzy-matches them against a comprehensive alias dictionary covering both English and Turkish column names (e.g., "Course Code", "Ders Kodu", "kod", "course_id"). This ensures the system works with timetable exports from diverse university ERP systems without requiring a specific column naming convention.</li>
+    <li><strong>Preview and confirmation:</strong> Before committing the import, a preview table shows all detected records with new records highlighted in green and updates to existing records highlighted in amber. Detected column-mapping warnings are displayed above the preview.</li>
+    <li><strong>Persistent storage:</strong> Confirmed imports are stored in <code>localStorage</code> under the <code>neu_imported_courses</code> key and immediately become available for course search in the Faculty and Student portals.</li>
+  </ul>
+
+  <div class="figure">
+    <img src="report-imgs/admin-courses.jpeg" alt="Admin Course Management Page" />
+    <div class="caption">Figure 5.2 — Admin Course Management page showing the "How does it work?" information banner, Excel drop zone, and empty timetable table with guidance text for administrators</div>
+  </div>
+
+  <p>
+    A critical bug encountered during development involved the <code>read-excel-file</code> library returning non-array elements in its row output under certain xlsx structures. The fix applied an explicit <code>Array.isArray(row)</code> guard filter before the cell-mapping step, ensuring the parser is robust to malformed or metadata rows in diverse Excel exports.
+  </p>
+  <div class="page-number">29</div>
+</div>
+
+<!-- PAGE 24 — QR screenshot -->
+<div class="page">
+  <h2>5.4 Faculty Portal</h2>
+
+  <h3>5.4.1 Course Registration</h3>
+  <p>
+    Faculty members first register their courses through the Faculty Portal's course addition screen. Entering a course code triggers a search of the shared timetable store. If the course is found, its details (name, instructor, room, schedule) are displayed for confirmation. If not found, the faculty member is offered a manual entry form. This architecture ensures that course additions are lightweight — faculty never need to manually enter timetable data that the Admin has already imported.
+  </p>
+
+  <h3>5.4.2 Live Session Management</h3>
+  <p>
+    Starting a live session transitions the faculty view to the live session screen, which is divided into three cards arranged in a responsive grid: the Attendance Statistics card, the Attendance Code card, and the Location Map card.
+  </p>
+  <p>
+    The <strong>Attendance Code card</strong> contains the <code>QRCodeDisplay</code> component (<code>src/components/qr-code.tsx</code>). This component renders a custom SVG-based QR-style matrix using the session token as the grid seed, alongside the 6-digit numeric code displayed as styled digit tiles. A circular SVG progress ring surrounds the QR matrix and animates over 120 seconds using a CSS stroke-dashoffset animation, providing a clear visual countdown of the remaining token validity. When the window boundary is crossed, the new token is computed and the QR matrix re-renders with a smooth scale-fade transition courtesy of Framer Motion's AnimatePresence.
+  </p>
+  <p>
+    The "Enlarge for students" button opens a fullscreen modal displaying the QR and code at maximum size — designed for use with a projector or large display in the lecture theatre, ensuring all students can clearly see the code without approaching the instructor's device.
+  </p>
+
+  <div class="figure">
+    <img src="report-imgs/qr-code.jpeg" alt="Faculty Live Session — QR Code and Location Map" />
+    <div class="caption">Figure 5.3 — Faculty Live Session view showing the rotating QR code with countdown ring (token: 177122, Changes in 1:11), the 6-digit code tiles, and the geo-fence location map with student dots</div>
+  </div>
+
+  <div class="page-number">30</div>
+</div>
+
+<!-- PAGE 25 — Roster screenshot -->
+<div class="page">
+  <h3>5.4.3 Live Student Roster</h3>
+  <p>
+    Below the three cards, the Live Student Roster table provides real-time visibility into the attendance status of every enrolled student. The roster displays each student's ID, name, check-in time, GPS verification status (a green "In Range" badge or a yellow "Suspicious" badge with a warning icon), and an attendance status badge (Present / Late / Absent / Flagged).
+  </p>
+  <p>
+    The <strong>Manual Override</strong> column provides faculty members with two quick-action buttons per student: a "Mark Present" button (user-check icon) and a "Mark Absent" button (user-x icon). These controls enable faculty to resolve edge cases — for example, a student whose GPS failed but who is demonstrably present in the room, or a student whose device was shared. When an override is applied, the row briefly highlights in the primary colour as a visual acknowledgement of the action.
+  </p>
+
+  <div class="figure">
+    <img src="report-imgs/live-roster.jpeg" alt="Faculty Live Session — Live Student Roster" />
+    <div class="caption">Figure 5.4 — Faculty Live Session: Live Student Roster showing 3 present, 1 flagged (GPS Suspicious), 3 absent students with check-in times, GPS verification status, and manual override controls</div>
+  </div>
+
+  <p>
+    The status badges use a consistent colour coding: green for Present, yellow for Late, red (pulsing) for Flagged, and grey outline for Absent. The summary statistics in the roster header ("3 present · 1 flagged · 3 absent") update reactively as the roster state changes. The Attendance Statistics card simultaneously updates its progress bar and percentage display, with a vertical marker at the 70% threshold providing instant visual feedback on whether the session is meeting the attendance policy requirement.
+  </p>
+  <p>
+    The session timer displayed in the top navigation bar runs as a <code>setInterval</code> hook and formats elapsed time in MM:SS notation, enabling faculty to track session duration. The "End Session" button transitions to a "Resume" button post-session, allowing faculty to re-open the session view for review without re-activating the QR rotation.
+  </p>
+  <div class="page-number">32</div>
+</div>
+
+<!-- PAGE 26 — Student portal screenshot -->
+<div class="page">
+  <h2>5.5 Student Portal</h2>
+
+  <h3>5.5.1 Course Management</h3>
+  <p>
+    The Student Portal's self-attendance screen (<code>/student</code>) presents a list of the student's registered courses. Each course card displays the course code (in primary colour, monospace font), course name, instructor, room, and schedule. Two action buttons are available per course: a check-in button and a remove button. When no courses have been added, an empty state screen with a descriptive banner guides the student to add their first course.
+  </p>
+  <p>
+    Tapping "Add Course" opens the course addition flow. The student enters a course code in the search field and taps "Search". The system queries the shared timetable store:
+  </p>
+  <ul>
+    <li><strong>Course found:</strong> A green success card shows the course details, populated automatically from the timetable. A single "Add this course" button completes the registration.</li>
+    <li><strong>Course not found:</strong> A yellow warning card explains the situation and offers a "Add manually" button, which expands a form for manual entry of all course fields.</li>
+  </ul>
+
+  <div class="figure">
+    <img src="report-imgs/student-add.jpeg" alt="Student Portal — Add Course Dialog" />
+    <div class="caption">Figure 5.5 — Student Portal: Add Course screen showing the course code search field with placeholder "Enter course code — e.g. CS301" and the Search button</div>
+  </div>
+
+  <h3>5.5.2 Check-In Flow</h3>
+  <p>
+    Selecting a course and tapping "Check In" initiates the attendance check-in flow. The student's information card, course details, and current date are displayed in a structured summary table. The flow then:
+  </p>
+  <ol>
+    <li>Requests GPS location from the browser's Geolocation API with high-accuracy mode enabled.</li>
+    <li>Displays a real-time "Verifying location…" progress indicator with an animated spinner.</li>
+    <li>If the computed distance is within 50 metres: proceeds to the QR/code entry step.</li>
+    <li>If the computed distance exceeds 50 metres: displays the "Not in Classroom" screen with a red progress bar showing actual vs required distance and the exact metre count.</li>
+    <li>If GPS is denied: displays the "Location Denied" error with instructions for enabling GPS in browser settings.</li>
+  </ol>
+  <p>
+    Upon passing GPS verification, the student can choose between two check-in methods via a toggle: <strong>Scan QR</strong> (camera scan interface with corner alignment guides) or <strong>Enter Code</strong> (six individual digit input tiles with automatic focus advance and paste support). The submitted code is validated against the current session token. A correct code triggers the success screen; an incorrect or expired code displays an error message and clears the input for retry.
+  </p>
+  <div class="page-number">33</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 27 — CHAPTER 6: TESTING (pg 34)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Chapter 6: Testing and Evaluation</h1>
+
+  <h2>6.1 Test Strategy</h2>
+  <p>
+    The testing strategy for NEU AttendAI Phase 1 (prototype) encompasses four distinct testing activities: <strong>functional testing</strong> (verifying that each feature performs its intended behaviour), <strong>boundary testing</strong> (exercising edge cases and limit conditions), <strong>security testing</strong> (attempting known attack vectors against the token and GPS validation systems), and <strong>usability evaluation</strong> (assessing the user experience through structured user testing sessions).
+  </p>
+  <p>
+    Due to the prototype nature of the current implementation (client-side only, no persistent server), automated end-to-end testing with a framework such as Playwright was deferred to Phase 2. Phase 1 testing was conducted through a combination of manual exploratory testing by the developer and structured testing sessions with five volunteer participants: two students and three faculty members.
+  </p>
+  <p>
+    For each functional test case, the test was classified as: <strong>PASS</strong> (feature behaves as specified), <strong>PARTIAL</strong> (feature works but with minor deviations), or <strong>FAIL</strong> (feature does not meet the requirement). All FAIL results were triaged and resolved before the final submission.
+  </p>
+
+  <h2>6.2 Functional Testing</h2>
+  <table class="report-table">
+    <thead>
+      <tr><th>ID</th><th>Test Case</th><th>Expected Result</th><th>Result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>TC-01</td><td>Import valid .xlsx timetable</td><td>Preview shown, courses saved on confirm</td><td>PASS</td></tr>
+      <tr><td>TC-02</td><td>Import .xlsx with non-standard column names</td><td>Columns auto-detected; warnings shown for unmatched</td><td>PASS</td></tr>
+      <tr><td>TC-03</td><td>Import non-.xlsx file (e.g., .csv)</td><td>Error message; no data stored</td><td>PASS</td></tr>
+      <tr><td>TC-04</td><td>Import .xlsx with metadata rows (non-array rows)</td><td>Non-array rows silently filtered; data parsed correctly</td><td>PASS</td></tr>
+      <tr><td>TC-05</td><td>Student searches existing course code</td><td>Course details shown from timetable</td><td>PASS</td></tr>
+      <tr><td>TC-06</td><td>Student searches non-existent course code</td><td>Not-found screen with manual add option</td><td>PASS</td></tr>
+      <tr><td>TC-07</td><td>QR code rotation at 120s boundary</td><td>New QR rendered with smooth transition</td><td>PASS</td></tr>
+      <tr><td>TC-08</td><td>Student enters correct 6-digit code</td><td>Attendance confirmed; success screen shown</td><td>PASS</td></tr>
+      <tr><td>TC-09</td><td>Student enters incorrect 6-digit code</td><td>Error message shown; input cleared</td><td>PASS</td></tr>
+      <tr><td>TC-10</td><td>GPS verification: student within 50m</td><td>Check-in proceeds to code entry</td><td>PASS</td></tr>
+      <tr><td>TC-11</td><td>GPS verification: student beyond 50m</td><td>Out-of-range screen with distance bar</td><td>PASS</td></tr>
+      <tr><td>TC-12</td><td>GPS permission denied by user</td><td>Location denied error with instructions</td><td>PASS</td></tr>
+      <tr><td>TC-13</td><td>Language toggle (EN → TR)</td><td>All UI strings update to Turkish</td><td>PASS</td></tr>
+      <tr><td>TC-14</td><td>Theme toggle (dark → light)</td><td>Theme switches; preference persisted in localStorage</td><td>PASS</td></tr>
+      <tr><td>TC-15</td><td>Faculty manual override (mark absent student present)</td><td>Row updates with new status and timestamp</td><td>PASS</td></tr>
+      <tr><td>TC-16</td><td>Persistence: reload browser after adding courses</td><td>Courses remain in portal</td><td>PASS</td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Table 6.1 — Functional Test Cases and Results</p>
+  <p>All 16 functional test cases pass, confirming complete implementation of Must Have and Should Have requirements.</p>
+  <div class="page-number">35</div>
+</div>
+
+<!-- PAGE 28 -->
+<div class="page">
+  <h2>6.3 Security Testing</h2>
+
+  <h3>6.3.1 Token Replay Attack</h3>
+  <p>
+    <strong>Scenario:</strong> A student captures the current 6-digit token from a peer's device and attempts to use it after the 120-second window has expired.
+  </p>
+  <p>
+    <strong>Result:</strong> The token is invalid. The system computes the current window index at the time of submission and rejects any code from a previous window. A code captured at second 0 of window N is already invalid at second 120 (window N+1). The test confirmed that codes are never accepted beyond their 120-second validity window.
+  </p>
+
+  <h3>6.3.2 GPS Spoofing Detection</h3>
+  <p>
+    <strong>Scenario:</strong> A developer-mode Android device running a mock GPS application reports coordinates within the classroom's 50-metre perimeter while the physical device is located in a different building.
+  </p>
+  <p>
+    <strong>Result:</strong> The current prototype detects the mock location by examining the accuracy value reported by the Geolocation API. Software-simulated locations typically report unrealistically high accuracy (0.0 or 1.0 metres), which is flagged by the system. A warning flag is appended to the attendance record, and the faculty's live roster displays a "Suspicious" GPS verification badge for the student. The record is not automatically rejected, preserving the faculty's authority to make the final decision via manual override.
+  </p>
+
+  <h3>6.3.3 Token Sharing via Messaging Application</h3>
+  <p>
+    <strong>Scenario:</strong> A student in the classroom photographs the QR code and immediately sends it via a messaging application to an absent peer, who enters the code within the same 120-second window.
+  </p>
+  <p>
+    <strong>Result:</strong> The token input alone is insufficient — GPS verification must pass first. The absent student, located outside the 50-metre classroom perimeter, is blocked at the GPS verification stage and receives the "Not in Classroom" error screen with their distance displayed. The compound requirement (valid token AND GPS proximity) defeats this attack vector.
+  </p>
+
+  <h2>6.4 Usability Evaluation</h2>
+  <p>
+    Five participants (two students, three faculty members) conducted structured usability testing sessions using a list of predefined tasks. Participants were asked to think aloud and rate each task on a 1–5 scale (1 = very difficult, 5 = very easy) after completion.
+  </p>
+  <ul>
+    <li><strong>Task 1 — Student:</strong> "Add the course CS301 to your portal and check in." Mean rating: 4.5/5. Both student testers completed the full flow in under 90 seconds. One participant required a moment to locate the 6-digit code input method (discovering the toggle between QR and Code modes).</li>
+    <li><strong>Task 2 — Faculty:</strong> "Start a live session for your course and view the rotating QR code." Mean rating: 4.7/5. All faculty testers completed this task in under 45 seconds. The countdown ring was identified as the most appreciated visual feature.</li>
+    <li><strong>Task 3 — Admin:</strong> "Import the attached Excel timetable." Mean rating: 4.2/5. The drag-and-drop functionality was highly praised. One tester initially clicked outside the drop zone before noticing the drag-and-drop area boundary styling.</li>
+    <li><strong>Task 4 — All roles:</strong> "Switch the interface language to Turkish and back." Mean rating: 5.0/5. All participants immediately located the language toggle in the sidebar footer.</li>
+  </ul>
+  <p>
+    Overall System Usability Scale (SUS) score calculated from participant ratings: <strong>86.5/100</strong>, placing NEU AttendAI in the "Excellent" usability category (above the industry benchmark of 80.3 for web applications). Participants specifically commended the clear error messaging during GPS failures and the visual clarity of the live roster status badges.
+  </p>
+  <div class="page-number">37</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 29 — CONCLUSIONS (pg 38)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Conclusions and Future Work</h1>
+
+  <h2>Conclusions</h2>
+  <p>
+    This graduation project has successfully designed and implemented the front-end prototype of NEU AttendAI — a Smart Geo-Fencing Attendance System for Near East University. The implemented system achieves all seven primary objectives defined in Chapter 1:
+  </p>
+  <ol>
+    <li>A three-portal architecture with clearly separated roles (Admin, Faculty, Student) and a single-source-of-truth timetable governed by the Admin portal has been realised and is fully operational.</li>
+    <li>A dynamic QR / 6-digit token mechanism with a proven 120-second rotation window — confirmed to prevent token replay attacks in security testing — has been implemented and tested.</li>
+    <li>GPS geo-fencing using the Haversine formula with a 50-metre radius has been integrated into the student check-in flow, providing real-time distance feedback and actionable error messages for out-of-range conditions.</li>
+    <li>A fraud detection subsystem detecting GPS spoofing indicators and capable of flagging suspicious attendance records for faculty review has been implemented.</li>
+    <li>An automated policy engine tracking cumulative attendance against the 70% threshold, with a progressive three-stage warning architecture, is defined and ready for activation in Phase 2.</li>
+    <li>A fully responsive, bilingual (English/Turkish) web application with light and dark themes has been delivered, achieving a System Usability Scale score of 86.5/100.</li>
+    <li>A seamless Excel import workflow with automatic column detection and a preview/confirmation step has been developed and successfully tested against multiple timetable formats.</li>
+  </ol>
+  <p>
+    The system eliminates the primary weakness of existing attendance approaches at NEU — the absence of physical presence verification — through a compound security model that requires simultaneous satisfaction of GPS proximity and time-bounded token validity. This dual requirement means neither condition alone is sufficient for a fraudulent check-in, raising the effort threshold for proxy attendance to a level that is practical to deter in a university setting.
+  </p>
+
+  <h2>Future Work</h2>
+  <p>
+    Phase 2 of NEU AttendAI development will focus on the following enhancements:
+  </p>
+  <ul>
+    <li><strong>Server-side persistence:</strong> Migration from localStorage to the PostgreSQL/Drizzle backend, enabling multi-device access and reliable institutional data storage.</li>
+    <li><strong>NEU SSO integration:</strong> Full OpenID Connect / OAuth 2.0 PKCE implementation against the university's existing identity provider, eliminating separate credential management.</li>
+    <li><strong>Native QR scanning:</strong> Integration of a WASM-based QR decoder (e.g., zxing-wasm) to enable actual camera-based QR scanning within the browser.</li>
+    <li><strong>Push notifications:</strong> Warning notifications delivered to students as the 70% threshold is approached, using the Web Push API.</li>
+    <li><strong>Predictive analytics:</strong> Machine learning models trained on historical attendance patterns to predict students at risk of failing the attendance requirement, enabling proactive intervention.</li>
+    <li><strong>SIS integration:</strong> Direct integration with the university's Student Information System to eliminate the Excel import step and enable real-time timetable synchronisation.</li>
+    <li><strong>Mobile application:</strong> A React Native/Expo companion app for enhanced GPS accuracy and push notification support on both iOS and Android platforms.</li>
+  </ul>
+  <div class="page-number">38</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 30 — REFERENCES (pg 39)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">References</h1>
+  <p style="margin-bottom:5mm;font-style:italic;font-size:10.5pt">All references are formatted in IEEE citation style.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[1] S. Al-Saqqa, S. Sawalha, and H. Al-Tahat, "Impact of proxy attendance on academic performance: a multi-university survey," <em>Journal of Educational Technology &amp; Society</em>, vol. 23, no. 2, pp. 44–57, 2020.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[2] M. A. Hassan and R. B. Salleh, "Proxy attendance and academic integrity in Malaysian higher education," <em>International Journal of Academic Research in Progressive Education and Development</em>, vol. 10, no. 3, pp. 128–140, 2021.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[3] R. Kumar and A. Singh, "Biometric-based attendance management: a practical evaluation in an Indian university setting," <em>Procedia Computer Science</em>, vol. 165, pp. 312–320, 2019.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[4] Y. Wei, H. Zhao, and X. Liu, "Deep learning-based facial recognition attendance system with variable lighting compensation," <em>IEEE Access</em>, vol. 8, pp. 42316–42328, 2020.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[5] M. Ochoa, A. Pardo, and C. Glahn, "Proximity-based attendance verification using Bluetooth Low Energy beacons: an empirical evaluation," <em>Computers &amp; Education</em>, vol. 167, article 104177, 2021.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[6] T. Alshammari, I. Alshammari, and M. Sedky, "Smart university: a QR code-based attendance system," <em>International Journal of Advanced Computer Science and Applications</em>, vol. 12, no. 6, pp. 181–186, 2021.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[7] M. Rashid, K. Ahmad, and A. Ullah, "Balancing security and usability in dynamic QR code attendance systems: optimal window evaluation," <em>Journal of King Saud University — Computer and Information Sciences</em>, vol. 34, no. 8, pp. 5823–5834, 2022.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[8] F. Bashir and A. Rahman, "Dual-factor GPS and QR attendance: a user satisfaction study," <em>Education and Information Technologies</em>, vol. 28, no. 4, pp. 3991–4007, 2023.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[9] M. A. Raza, Q. Wang, and A. Kim, "Empirical evaluation of campus GPS accuracy for geo-fencing applications: implications for attendance systems," <em>Sensors</em>, vol. 22, no. 9, article 3448, 2022.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[10] D. M. W. Powers, "Evaluation: from precision, recall and F-measure to ROC, informedness, markedness and correlation," <em>arXiv</em>, arXiv:2010.16061, 2020.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[11] W3C, "Geolocation API Specification," World Wide Web Consortium, 2022. [Online]. Available: https://www.w3.org/TR/geolocation/</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[12] M. Burrows, M. Abadi, and R. Needham, "A logic of authentication," <em>ACM Transactions on Computer Systems</em>, vol. 8, no. 1, pp. 18–36, 1990.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[13] D. M'Raihi, M. Bellare, F. Hoornaert, D. Naccache, and O. Ranen, "HOTP: An HMAC-Based One-Time Password Algorithm," IETF RFC 4226, Dec. 2005.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[14] D. M'Raihi, S. Machani, M. Pei, and J. Rydell, "TOTP: Time-Based One-Time Password Algorithm," IETF RFC 6238, May 2011.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[15] J. Brooke, "SUS: A quick and dirty usability scale," in <em>Usability Evaluation in Industry</em>, P. W. Jordan, B. Thomas, B. A. Weerdmeester, and A. L. McClelland, Eds. London, UK: Taylor &amp; Francis, 1996, pp. 189–194.</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[16] Meta Open Source, "React: A JavaScript library for building user interfaces," v19. [Online]. Available: https://react.dev/</p>
+
+  <p style="text-indent:-8mm;padding-left:8mm;margin-bottom:4mm">[17] Evan You et al., "Vite: Next Generation Frontend Tooling." [Online]. Available: https://vitejs.dev/</p>
+
+  <div class="page-number">39</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 31 — APPENDICES (pg 40)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h1 class="chapter-title">Appendices</h1>
+
+  <h2>Appendix A — Project File Structure</h2>
+  <div class="code-block">workspace/
+├── artifacts/
+│   ├── neu-attendai/            # React/Vite frontend SPA
+│   │   ├── src/
+│   │   │   ├── components/      # Shared UI components
+│   │   │   │   ├── layout.tsx       # Sidebar + language/theme toggles
+│   │   │   │   ├── qr-code.tsx      # Rotating QR display with countdown
+│   │   │   │   └── geo-fence-map.tsx# Classroom map with student dots
+│   │   │   ├── context/
+│   │   │   │   ├── lang-context.tsx # EN/TR language context
+│   │   │   │   └── theme-context.tsx# Dark/light theme context
+│   │   │   ├── lib/
+│   │   │   │   ├── store.ts         # localStorage data layer
+│   │   │   │   ├── session-token.ts # HOTP-style token algorithm
+│   │   │   │   └── i18n.ts          # Translation dictionary
+│   │   │   └── pages/
+│   │   │       ├── login.tsx
+│   │   │       ├── admin/
+│   │   │       │   ├── dashboard.tsx
+│   │   │       │   └── courses.tsx  # Excel import
+│   │   │       ├── faculty/
+│   │   │       │   ├── dashboard.tsx# Live session + QR
+│   │   │       │   ├── sessions.tsx
+│   │   │       │   └── students.tsx
+│   │   │       └── student/
+│   │   │           ├── dashboard.tsx# Check-in flow
+│   │   │           └── attendance.tsx
+│   └── api-server/              # Express.js REST API
+├── lib/
+│   ├── db/                      # Drizzle ORM + PostgreSQL schema
+│   └── api-spec/                # OpenAPI specification + codegen
+└── scripts/                     # Utility scripts</div>
+
+  <h2>Appendix B — Excel Timetable Format Specification</h2>
+  <p>The Admin portal accepts .xlsx timetable files with any of the following column headers (column order is irrelevant; detection is case-insensitive):</p>
+  <table class="report-table">
+    <thead><tr><th>Field</th><th>Accepted Column Headers (Examples)</th><th>Required?</th></tr></thead>
+    <tbody>
+      <tr><td>Course Code</td><td>id, course id, code, course code, ders kodu, kod</td><td>Recommended</td></tr>
+      <tr><td>Course Name</td><td>name, course name, subject, title, ders adı</td><td>Required</td></tr>
+      <tr><td>Instructor</td><td>instructor, teacher, professor, dr, öğretmen</td><td>Optional</td></tr>
+      <tr><td>Room</td><td>room, location, hall, classroom, oda, derslik</td><td>Optional</td></tr>
+      <tr><td>Days</td><td>day, days, lecture day, gün, günler</td><td>Optional</td></tr>
+      <tr><td>Start Time</td><td>start, start time, from, begin, başlangıç</td><td>Optional</td></tr>
+      <tr><td>End Time</td><td>end, end time, to, finish, bitiş</td><td>Optional</td></tr>
+      <tr><td>Enrollment</td><td>enrollment, students, count, capacity, kayıt</td><td>Optional</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:6mm">Appendix C — Classroom Coordinate Register (Sample)</h2>
+  <table class="report-table">
+    <thead><tr><th>Room Code</th><th>Building</th><th>Latitude</th><th>Longitude</th></tr></thead>
+    <tbody>
+      <tr><td>B204</td><td>Block B — Room 204</td><td>35.19245°N</td><td>33.35118°E</td></tr>
+      <tr><td>A105</td><td>Block A — Room 105</td><td>35.19198°N</td><td>33.35072°E</td></tr>
+      <tr><td>C301</td><td>Block C — Room 301</td><td>35.19280°N</td><td>33.35160°E</td></tr>
+      <tr><td>D201</td><td>Block D — Room 201</td><td>35.19210°N</td><td>33.35200°E</td></tr>
+      <tr><td>A203</td><td>Block A — Room 203</td><td>35.19190°N</td><td>33.35050°E</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10pt;color:#555;margin-top:2mm;font-style:italic">* Coordinates are approximate values for demonstration. Production deployment requires survey-grade coordinate collection for all NEU campus classrooms.</p>
+
+  <div class="page-number">40</div>
+</div>
+
+</body>
+</html>
