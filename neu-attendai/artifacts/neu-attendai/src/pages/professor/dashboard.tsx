@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  Square, Play, MapPin, AlertTriangle, UserCheck, UserX,
+  Square, Play, MapPin, AlertTriangle, UserCheck, UserX, XCircle,
   Clock, RefreshCw, Search, Plus, BookOpen, X, Trash2,
   Brain, ShieldAlert, TrendingDown, TrendingUp, Minus,
   ChevronDown, ChevronUp,
@@ -18,10 +18,9 @@ import { type CourseRecord } from "@/lib/store";
 import {
   apiStartSession, apiEndSession, apiGetCourses,
   apiGetProfessorCourses, apiAddProfessorCourse, apiRemoveProfessorCourse,
-  apiManualCheckIn, apiGetCourseStudents, apiGetSessionAttendance,
+  apiManualCheckIn, apiMarkAbsent, apiGetCourseStudents, apiGetSessionAttendance,
   type ApiUserCourse,
 } from "@/lib/api";
-import { getActiveSemester } from "@/lib/store";
 import { generateSessionToken } from "@/lib/session-token";
 import { useLang } from "@/context/lang-context";
 import { generateCourseStudentRisks, type StudentRisk } from "@/lib/ai-analytics";
@@ -125,12 +124,11 @@ export default function ProfessorDashboard() {
     });
   }, []);
 
-  /* ── Load timetable courses when add_course opens (for search) ── */
+  /* ── Load timetable courses when add_course opens (all semesters) ── */
   useEffect(() => {
     if (screen !== "add_course") return;
     setDbLoading(true);
-    const activeSem = getActiveSemester();
-    apiGetCourses(activeSem).then((r) => {
+    apiGetCourses().then((r) => {
       if (r.data) {
         setDbCourses(r.data.courses.map((c) => ({
           id: c.id, name: c.name, instructor: c.instructor,
@@ -195,15 +193,19 @@ export default function ProfessorDashboard() {
     );
     setJustMarked(id);
     setTimeout(() => setJustMarked(null), 1500);
-    /* Persist to DB when marking present (manual override) */
-    if (status === "present" && activeSessionId && activeCourse) {
-      const studentName = name ?? students.find((s) => s.id === id)?.name ?? "";
-      apiManualCheckIn({
-        sessionId:   activeSessionId,
-        courseId:    activeCourse.id,
-        studentId:   id,
-        studentName,
-      }).catch(() => {/* silent — local state already updated */});
+    /* Persist to DB */
+    if (activeSessionId && activeCourse) {
+      if (status === "present") {
+        const studentName = name ?? students.find((s) => s.id === id)?.name ?? "";
+        apiManualCheckIn({
+          sessionId:   activeSessionId,
+          courseId:    activeCourse.id,
+          studentId:   id,
+          studentName,
+        }).catch(() => {/* silent — local state already updated */});
+      } else if (status === "absent") {
+        apiMarkAbsent(activeSessionId, id).catch(() => {/* silent — local state already updated */});
+      }
     }
   };
 
@@ -271,6 +273,7 @@ export default function ProfessorDashboard() {
       localStorage.removeItem("neu_active_session_id");
       localStorage.removeItem("neu_active_session_course");
     }
+    setScreen("my_courses");
   };
 
   /* Simulate a flagged student check-in (demo) */
@@ -313,8 +316,11 @@ export default function ProfessorDashboard() {
     else { setSearchResults("not_found"); setManualForm((f) => ({ ...f, id: searchCode.trim().toUpperCase() })); }
   };
 
+  const [addError, setAddError] = useState("");
+
   const handleAddCourse = async (course: CourseRecord) => {
-    await apiAddProfessorCourse({
+    setAddError("");
+    const result = await apiAddProfessorCourse({
       courseCode: course.id,
       courseName: course.name,
       room:       course.room       ?? "",
@@ -325,6 +331,7 @@ export default function ProfessorDashboard() {
       semester:   course.semester   ?? "",
       source:     course.source,
     });
+    if (result.error) { setAddError(result.error); return; }
     const r = await apiGetProfessorCourses();
     if (r.data) setMyCourses(r.data.courses.map(mapUserCourse));
     setScreen("my_courses");
@@ -453,6 +460,14 @@ export default function ProfessorDashboard() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {addError && (
+              <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-sm text-destructive">
+                <XCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{addError}</span>
+              </motion.div>
+            )}
 
             <div className="flex gap-2">
               <div className="relative flex-1">

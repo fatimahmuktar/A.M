@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { sessionsTable, attendanceTable } from "@workspace/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -11,7 +12,7 @@ const StartSessionSchema = z.object({
   token:    z.string().min(1),
 });
 
-router.post("/sessions", async (req, res) => {
+router.post("/sessions", requireAuth, requireRole("professor"), async (req, res) => {
   const parsed = StartSessionSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues });
@@ -30,8 +31,8 @@ router.post("/sessions", async (req, res) => {
   }
 });
 
-router.get("/sessions/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/sessions/:id", requireAuth, async (req, res) => {
+  const id = req.params.id as string;
   try {
     const [session] = await db.select().from(sessionsTable).where(eq(sessionsTable.id, id));
     if (!session) { res.status(404).json({ error: "Session not found" }); return; }
@@ -42,8 +43,8 @@ router.get("/sessions/:id", async (req, res) => {
   }
 });
 
-router.patch("/sessions/:id/end", async (req, res) => {
-  const { id } = req.params;
+router.patch("/sessions/:id/end", requireAuth, requireRole("professor"), async (req, res) => {
+  const id = req.params.id as string;
   try {
     const [session] = await db.update(sessionsTable)
       .set({ active: false, endedAt: new Date() })
@@ -57,8 +58,8 @@ router.patch("/sessions/:id/end", async (req, res) => {
   }
 });
 
-router.get("/sessions/:id/attendance", async (req, res) => {
-  const { id } = req.params;
+router.get("/sessions/:id/attendance", requireAuth, async (req, res) => {
+  const id = req.params.id as string;
   try {
     const records = await db.select().from(attendanceTable)
       .where(eq(attendanceTable.sessionId, id))
@@ -70,7 +71,7 @@ router.get("/sessions/:id/attendance", async (req, res) => {
   }
 });
 
-router.get("/sessions", async (req, res) => {
+router.get("/sessions", requireAuth, async (req, res) => {
   try {
     const sessions = await db.select().from(sessionsTable).orderBy(desc(sessionsTable.startedAt));
     res.json({ sessions });

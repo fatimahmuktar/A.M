@@ -8,6 +8,7 @@ import {
 import { NeuLogo } from "@/components/neu-logo";
 import { useTheme } from "@/context/theme-context";
 import { useLang } from "@/context/lang-context";
+import { apiValidateInvitation } from "@/lib/api";
 
 /* ── Types ── */
 type Tab    = "student" | "professor" | "admin";
@@ -26,7 +27,7 @@ function Field({
 }: {
   label: string; type?: string; placeholder?: string;
   value: string; onChange: (v: string) => void; error?: string;
-  icon: React.FC<{ className?: string }>; rightEl?: React.ReactNode; autoComplete?: string;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; rightEl?: React.ReactNode; autoComplete?: string;
 }) {
   return (
     <div>
@@ -132,7 +133,7 @@ function persistSession(token: string, user: { id: string; email: string; name: 
 /* ── Main component ── */
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggle: toggleTheme } = useTheme();
   const { lang, toggle: toggleLang } = useLang();
 
   const [tab,    setTab]    = useState<Tab>("student");
@@ -152,6 +153,7 @@ export default function Login() {
   const [regPass,   setRegPass]   = useState("");
   const [regPass2,  setRegPass2]  = useState("");
   const [regErr,    setRegErr]    = useState<Record<string, string>>({});
+  const [inviteCode, setInviteCode] = useState("");
 
   /* Verify fields */
   const [verifyEmail,     setVerifyEmail]     = useState("");
@@ -191,7 +193,7 @@ export default function Login() {
     const data = await apiLogin(identifier, loginPass).catch(() => ({ error: "Network error" }));
     setBusy(false);
     if (data.error) { setLoginErr(data.error); return; }
-    if (data.token && data.user) {
+    if ('token' in data && data.token && data.user) {
       persistSession(data.token, data.user);
       setLocation(`/${data.user.role}`);
     }
@@ -204,9 +206,19 @@ export default function Login() {
     if (!regName.trim())  errs.name  = "Full name is required";
     if (!regEmail.trim()) errs.email = "Email is required";
     if (tab === "student" && !regId.trim()) errs.id = "University ID is required";
+    if (tab === "professor" && !inviteCode.trim()) errs.invite = "Invitation code is required";
     if (regPass.length < 8)     errs.pass  = "Password must be at least 8 characters";
     if (regPass !== regPass2)   errs.pass2 = "Passwords do not match";
     if (Object.keys(errs).length) { setRegErr(errs); return; }
+
+    // Validate invitation code on the server before proceeding
+    if (tab === "professor") {
+      setBusy(true);
+      const invResult = await apiValidateInvitation(inviteCode.trim());
+      setBusy(false);
+      if (invResult.error) { setRegErr({ invite: invResult.error }); return; }
+    }
+
     setBusy(true);
     const data = await apiRegister({
       role: tab,
@@ -214,11 +226,12 @@ export default function Login() {
       password: regPass,
       name: regName.trim(),
       ...(tab === "student" ? { studentNumber: regId.trim() } : {}),
+      ...(tab === "professor" ? { invitationCode: inviteCode.trim() } : {}),
     }).catch(() => ({ error: "Network error" }));
     setBusy(false);
     if (data.error) { setRegErr({ _: data.error }); return; }
-    setVerifyEmail(data.email ?? regEmail.trim());
-    setVerifyDemoCode(data.demoCode ?? null);
+    setVerifyEmail('email' in data ? (data.email ?? regEmail.trim()) : regEmail.trim());
+    setVerifyDemoCode('demoCode' in data ? (data.demoCode ?? null) : null);
     setVerifyCode("");
     setVerifyErr("");
     goScreen("verify");
@@ -233,7 +246,7 @@ export default function Login() {
     const data = await apiVerifyEmail(verifyEmail, verifyCode.trim()).catch(() => ({ error: "Network error" }));
     setBusy(false);
     if (data.error) { setVerifyErr(data.error); return; }
-    if (data.token && data.user) {
+    if ('token' in data && data.token && data.user) {
       persistSession(data.token, data.user);
       setLocation(`/${data.user.role}`);
     }
@@ -250,7 +263,7 @@ export default function Login() {
     }).catch(() => ({ error: "Network error" }));
     setBusy(false);
     if (!data.error) {
-      setVerifyDemoCode(data.demoCode ?? null);
+      setVerifyDemoCode('demoCode' in data ? (data.demoCode ?? null) : null);
       setVerifyCode("");
       setVerifyErr("");
     }
@@ -265,8 +278,8 @@ export default function Login() {
     const data = await apiForgotPassword(forgotId.trim()).catch(() => ({ error: "Network error" }));
     setBusy(false);
     if (data.error) { setForgotErr(data.error); return; }
-    setForgotEmail(data.email ?? "");
-    setForgotDemoCode(data.demoCode ?? null);
+    setForgotEmail('email' in data ? (data.email ?? "") : "");
+    setForgotDemoCode('demoCode' in data ? (data.demoCode ?? null) : null);
     setResetCode("");
     setResetPass("");
     setResetPass2("");
@@ -384,6 +397,10 @@ export default function Login() {
         <Field label="University Email" type="email"
           placeholder={tab === "student" ? "20225507@std.neu.edu.tr" : "name@neu.edu.tr"}
           value={regEmail} onChange={setRegEmail} icon={Mail} error={regErr.email} autoComplete="email" />
+        {tab === "professor" && (
+          <Field label="Invitation Code" placeholder="e.g. ABC12345"
+            value={inviteCode} onChange={setInviteCode} icon={KeyRound} error={regErr.invite} />
+        )}
         <PasswordField label="Password" value={regPass} onChange={setRegPass} error={regErr.pass} />
         <PasswordField label="Confirm Password" value={regPass2} onChange={setRegPass2} error={regErr.pass2} />
 

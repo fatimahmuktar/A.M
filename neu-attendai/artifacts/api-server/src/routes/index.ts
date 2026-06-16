@@ -7,6 +7,7 @@ import attendanceRouter from "./attendance";
 import settingsRouter from "./settings";
 import studentCoursesRouter from "./studentCourses";
 import professorCoursesRouter from "./professorCourses";
+import invitationsRouter from "./invitations";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(attendanceRouter);
 router.use(settingsRouter);
 router.use(studentCoursesRouter);
 router.use(professorCoursesRouter);
+router.use(invitationsRouter);
 
 export default router;

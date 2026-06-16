@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { professorCoursesTable, studentCoursesTable, usersTable } from "@workspace/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -19,14 +20,8 @@ const CourseSchema = z.object({
   source:     z.enum(["imported", "manual"]).default("imported"),
 });
 
-function getUserId(req: Parameters<Parameters<ReturnType<typeof Router>["get"]>[1]>[0]): string | null {
-  const id = req.headers["x-user-id"];
-  return typeof id === "string" && id.trim() ? id.trim() : null;
-}
-
-router.get("/professor/courses", async (req, res) => {
-  const professorId = getUserId(req);
-  if (!professorId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.get("/professor/courses", requireAuth, requireRole("professor"), async (req, res) => {
+  const professorId = req.user!.email;
   try {
     const rows = await db
       .select()
@@ -40,9 +35,8 @@ router.get("/professor/courses", async (req, res) => {
   }
 });
 
-router.post("/professor/courses", async (req, res) => {
-  const professorId = getUserId(req);
-  if (!professorId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.post("/professor/courses", requireAuth, requireRole("professor"), async (req, res) => {
+  const professorId = req.user!.email;
   const parsed = CourseSchema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues }); return; }
   const c = parsed.data;
@@ -63,10 +57,9 @@ router.post("/professor/courses", async (req, res) => {
   }
 });
 
-router.delete("/professor/courses/:courseCode", async (req, res) => {
-  const professorId = getUserId(req);
-  const { courseCode } = req.params;
-  if (!professorId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.delete("/professor/courses/:courseCode", requireAuth, requireRole("professor"), async (req, res) => {
+  const professorId = req.user!.email;
+  const courseCode = req.params.courseCode as string;
   try {
     await db
       .delete(professorCoursesTable)
@@ -80,13 +73,9 @@ router.delete("/professor/courses/:courseCode", async (req, res) => {
 
 /* GET /professor/courses/:courseCode/students
    Returns all students enrolled in a given course (joined with users table) */
-router.get("/professor/courses/:courseCode/students", async (req, res) => {
-  const professorId = getUserId(req);
-  if (!professorId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
-  const { courseCode } = req.params;
+router.get("/professor/courses/:courseCode/students", requireAuth, requireRole("professor"), async (req, res) => {
+  const courseCode = req.params.courseCode as string;
   try {
-    /* student_courses.student_id stores the student NUMBER (e.g. "20225507"),
-       so we join on users.student_number, not users.id */
     const rows = await db
       .select({
         studentId:     studentCoursesTable.studentId,

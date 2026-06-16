@@ -141,6 +141,7 @@ export default function StudentDashboard() {
   const [manualForm,   setManualForm]   = useState({
     id: "", name: "", instructor: "", room: "", days: "", startTime: "", endTime: "",
   });
+  const [addError, setAddError] = useState("");
 
   /* Attendance history */
   const [historyRecords,  setHistoryRecords]  = useState<ApiAttendanceRecord[]>([]);
@@ -167,12 +168,11 @@ export default function StudentDashboard() {
     });
   }, [screen, student.id]);
 
-  /* ── Load DB courses when add_course opens ── */
+  /* ── Load DB courses when add_course opens (all semesters) ── */
   useEffect(() => {
     if (screen !== "add_course") return;
     setDbLoading(true);
-    const activeSem = getActiveSemester();
-    apiGetCourses(activeSem).then((r) => {
+    apiGetCourses().then((r) => {
       if (r.data) {
         const mapped: CourseRecord[] = r.data.courses.map((c) => ({
           id: c.id, name: c.name, instructor: c.instructor,
@@ -213,7 +213,8 @@ export default function StudentDashboard() {
   };
 
   const handleAddCourse = async (course: CourseRecord) => {
-    await apiAddStudentCourse({
+    setAddError("");
+    const result = await apiAddStudentCourse({
       courseCode: course.id,
       courseName: course.name,
       room:       course.room       ?? "",
@@ -224,6 +225,7 @@ export default function StudentDashboard() {
       semester:   course.semester   ?? "",
       source:     course.source,
     });
+    if (result.error) { setAddError(result.error); return; }
     const r = await apiGetStudentCourses();
     if (r.data) setMyCourses(r.data.courses.map(mapUserCourse));
     setScreen("my_courses");
@@ -480,6 +482,15 @@ export default function StudentDashboard() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Error banner */}
+            {addError && (
+              <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-sm text-destructive">
+                <XCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{addError}</span>
+              </motion.div>
+            )}
 
             {/* Search bar */}
             <div className="flex gap-2">

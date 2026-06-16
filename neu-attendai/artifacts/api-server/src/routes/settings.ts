@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { settingsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -15,7 +16,7 @@ function currentSemesterDefault(): string {
   return m >= 2 && m <= 7 ? `Spring${y}` : `Fall${y}`;
 }
 
-router.get("/settings/active-semester", async (req, res) => {
+router.get("/settings/active-semester", requireAuth, async (req, res) => {
   try {
     const rows = await db
       .select()
@@ -29,7 +30,7 @@ router.get("/settings/active-semester", async (req, res) => {
   }
 });
 
-router.post("/settings/active-semester", async (req, res) => {
+router.post("/settings/active-semester", requireAuth, requireRole("admin"), async (req, res) => {
   const parsed = z.object({ semester: z.string().min(1) }).safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid payload" });

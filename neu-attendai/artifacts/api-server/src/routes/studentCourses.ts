@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { studentCoursesTable } from "@workspace/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -19,14 +20,8 @@ const CourseSchema = z.object({
   source:     z.enum(["imported", "manual"]).default("imported"),
 });
 
-function getUserId(req: Parameters<Parameters<ReturnType<typeof Router>["get"]>[1]>[0]): string | null {
-  const id = req.headers["x-user-id"];
-  return typeof id === "string" && id.trim() ? id.trim() : null;
-}
-
-router.get("/student/courses", async (req, res) => {
-  const studentId = getUserId(req);
-  if (!studentId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.get("/student/courses", requireAuth, requireRole("student"), async (req, res) => {
+  const studentId = req.user!.studentNumber ?? req.user!.sub;
   try {
     const rows = await db
       .select()
@@ -40,9 +35,8 @@ router.get("/student/courses", async (req, res) => {
   }
 });
 
-router.post("/student/courses", async (req, res) => {
-  const studentId = getUserId(req);
-  if (!studentId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.post("/student/courses", requireAuth, requireRole("student"), async (req, res) => {
+  const studentId = req.user!.studentNumber ?? req.user!.sub;
   const parsed = CourseSchema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues }); return; }
   const c = parsed.data;
@@ -63,10 +57,9 @@ router.post("/student/courses", async (req, res) => {
   }
 });
 
-router.delete("/student/courses/:courseCode", async (req, res) => {
-  const studentId = getUserId(req);
-  const { courseCode } = req.params;
-  if (!studentId) { res.status(401).json({ error: "Missing x-user-id header" }); return; }
+router.delete("/student/courses/:courseCode", requireAuth, requireRole("student"), async (req, res) => {
+  const studentId = req.user!.studentNumber ?? req.user!.sub;
+  const courseCode = req.params.courseCode as string;
   try {
     await db
       .delete(studentCoursesTable)

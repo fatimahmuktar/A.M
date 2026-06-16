@@ -907,7 +907,7 @@ export default function CourseManagement() {
           <CardTitle className="text-base">
             {t("admin.coursesInTable")}
             <span className="ml-2 text-sm font-normal text-muted-foreground">
-              ({filtered.length} courses)
+              ({courses.length} total in database)
             </span>
           </CardTitle>
           {/* Semester filter tabs */}
@@ -940,11 +940,27 @@ export default function CourseManagement() {
           )}
         </CardHeader>
         <CardContent className="p-0">
-          {filtered.length === 0 ? (
+          {!search || filtered.length === 0 ? (
             <div className="py-16 text-center space-y-3">
-              <FileSpreadsheet className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-              <p className="text-muted-foreground text-sm">{t("admin.noCoursesYet")}</p>
-              <p className="text-xs text-muted-foreground/60">{t("admin.importExplain")}</p>
+              {courses.length === 0 ? (
+                <>
+                  <FileSpreadsheet className="w-10 h-10 text-muted-foreground/30 mx-auto" />
+                  <p className="text-muted-foreground text-sm">{t("admin.noCoursesYet")}</p>
+                  <p className="text-xs text-muted-foreground/60">{t("admin.importExplain")}</p>
+                </>
+              ) : !search ? (
+                <>
+                  <Search className="w-10 h-10 text-muted-foreground/30 mx-auto" />
+                  <p className="text-muted-foreground text-sm">Use the search bar above to find courses</p>
+                  <p className="text-xs text-muted-foreground/60">{courses.length} courses available — search by code, name, instructor, or room</p>
+                </>
+              ) : (
+                <>
+                  <Search className="w-10 h-10 text-muted-foreground/30 mx-auto" />
+                  <p className="text-muted-foreground text-sm">No courses match "{search}"</p>
+                  <p className="text-xs text-muted-foreground/60">Try a different search term</p>
+                </>
+              )}
             </div>
           ) : (
             <>

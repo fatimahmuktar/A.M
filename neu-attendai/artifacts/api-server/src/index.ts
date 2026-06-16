@@ -2,6 +2,10 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { seedDemoAccounts } from "./lib/seed";
 
+if (!process.env["SESSION_SECRET"]) {
+  throw new Error("SESSION_SECRET environment variable is required but was not provided.");
+}
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {

@@ -3,7 +3,7 @@
  * All functions return { data, error } — callers decide how to handle errors.
  * Falls back gracefully when the server is unreachable.
  *
- * Auth: every request includes x-user-id header from localStorage "neu_auth".
+ * Auth: every request includes Bearer token from localStorage "neu_token".
  */
 
 export interface ApiCourse {
@@ -66,10 +66,8 @@ type ApiResult<T> = { data: T; error: null } | { data: null; error: string };
 
 function getAuthHeaders(): Record<string, string> {
   try {
-    const raw = localStorage.getItem("neu_auth");
-    if (!raw) return {};
-    const auth = JSON.parse(raw) as { id?: string };
-    return auth.id ? { "x-user-id": auth.id } : {};
+    const token = localStorage.getItem("neu_token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
   } catch {
     return {};
   }
@@ -86,11 +84,69 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<
       },
     });
     const json = await res.json();
-    if (!res.ok) return { data: null, error: json.error ?? `HTTP ${res.status}` };
+    if (!res.ok) {
+      return { data: null, error: json.error ?? `HTTP ${res.status}` };
+    }
     return { data: json as T, error: null };
   } catch (err) {
     return { data: null, error: err instanceof Error ? err.message : "Network error" };
   }
+}
+
+/* ── Auth endpoints (no auth header needed) ───────────────────── */
+
+export async function apiRegister(body: object) {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return res.json() as Promise<{ message?: string; email?: string; demoCode?: string; error?: string }>;
+}
+
+export async function apiVerifyEmail(email: string, code: string) {
+  const res = await fetch("/api/auth/verify-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code }),
+  });
+  return res.json() as Promise<{ token?: string; user?: { id: string; email: string; name: string; role: string; studentNumber?: string | null }; error?: string }>;
+}
+
+export async function apiLogin(identifier: string, password: string) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifier, password }),
+  });
+  return res.json() as Promise<{ token?: string; user?: { id: string; email: string; name: string; role: string; studentNumber?: string | null }; error?: string }>;
+}
+
+export async function apiForgotPassword(identifier: string) {
+  const res = await fetch("/api/auth/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifier }),
+  });
+  return res.json() as Promise<{ message?: string; email?: string; demoCode?: string; error?: string }>;
+}
+
+export async function apiResetPassword(email: string, code: string, newPassword: string) {
+  const res = await fetch("/api/auth/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code, newPassword }),
+  });
+  return res.json() as Promise<{ message?: string; error?: string }>;
+}
+
+export async function apiValidateInvitation(code: string) {
+  const res = await fetch("/api/auth/validate-invitation", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  });
+  return res.json() as Promise<{ valid?: boolean; role?: string; error?: string }>;
 }
 
 /* ── Courses ─────────────────────────────────────────────────── */
@@ -207,6 +263,14 @@ export async function apiManualCheckIn(payload: {
   return apiFetch<{ record: ApiAttendanceRecord }>("/attendance/manual", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+/* ── Professor marks student absent ─────────────────────────── */
+
+export async function apiMarkAbsent(sessionId: string, studentId: string) {
+  return apiFetch<{ deleted: string }>(`/attendance/session/${encodeURIComponent(sessionId)}/student/${encodeURIComponent(studentId)}`, {
+    method: "DELETE",
   });
 }
 

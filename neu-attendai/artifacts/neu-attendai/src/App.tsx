@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LangProvider } from "@/context/lang-context";
 import { ThemeProvider } from "@/context/theme-context";
+import { AuthGuard } from "@/components/auth-guard";
 
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
@@ -35,16 +36,34 @@ export default function App() {
           <LangProvider>
             <WouterRouter>
               <Switch>
-                <Route path="/"                          component={Login}             />
-                <Route path="/professor"                 component={ProfessorDashboard}/>
-                <Route path="/professor/schedule"        component={ProfessorSchedule} />
-                <Route path="/professor/sessions"        component={SessionHistory}    />
-                <Route path="/professor/students"        component={StudentRecords}    />
-                <Route path="/admin"                     component={AdminDashboard}    />
-                <Route path="/admin/courses"             component={CourseManagement}  />
-                <Route path="/student"                   component={StudentDashboard}  />
-                <Route path="/student/schedule"          component={StudentSchedule}   />
-                <Route path="/student/attendance"        component={StudentAttendance} />
+                <Route path="/" component={Login} />
+                <Route path="/professor">
+                  <AuthGuard role="professor"><ProfessorDashboard /></AuthGuard>
+                </Route>
+                <Route path="/professor/schedule">
+                  <AuthGuard role="professor"><ProfessorSchedule /></AuthGuard>
+                </Route>
+                <Route path="/professor/sessions">
+                  <AuthGuard role="professor"><SessionHistory /></AuthGuard>
+                </Route>
+                <Route path="/professor/students">
+                  <AuthGuard role="professor"><StudentRecords /></AuthGuard>
+                </Route>
+                <Route path="/admin">
+                  <AuthGuard role="admin"><AdminDashboard /></AuthGuard>
+                </Route>
+                <Route path="/admin/courses">
+                  <AuthGuard role="admin"><CourseManagement /></AuthGuard>
+                </Route>
+                <Route path="/student">
+                  <AuthGuard role="student"><StudentDashboard /></AuthGuard>
+                </Route>
+                <Route path="/student/schedule">
+                  <AuthGuard role="student"><StudentSchedule /></AuthGuard>
+                </Route>
+                <Route path="/student/attendance">
+                  <AuthGuard role="student"><StudentAttendance /></AuthGuard>
+                </Route>
                 <Route component={NotFound} />
               </Switch>
             </WouterRouter>

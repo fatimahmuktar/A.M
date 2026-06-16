@@ -2,13 +2,13 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { db } from "@workspace/db";
-import { usersTable, verificationCodesTable } from "@workspace/db/schema";
+import { usersTable, verificationCodesTable, invitationCodesTable } from "@workspace/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { DEMO_USERS, seedDemoAccounts } from "../lib/seed";
+import { requireAuth, requireRole, JWT_SECRET } from "../middlewares/auth";
 
 const router = Router();
 
-const JWT_SECRET = process.env["SESSION_SECRET"] ?? "dev-secret-change-in-prod";
 const JWT_EXPIRES = "24h";
 const BCRYPT_ROUNDS = 12;
 const CODE_TTL_MS = 10 * 60 * 1000; // 10 minutes
@@ -64,8 +64,8 @@ function validateProfessorEmail(email: string) {
 
 /* ── POST /api/auth/register ── */
 router.post("/auth/register", async (req, res) => {
-  const { role, email, password, name, studentNumber } = req.body as {
-    role: string; email: string; password: string; name: string; studentNumber?: string;
+  const { role, email, password, name, studentNumber, invitationCode } = req.body as {
+    role: string; email: string; password: string; name: string; studentNumber?: string; invitationCode?: string;
   };
 
   if (!role || !email || !password || !name) {
@@ -93,6 +93,10 @@ router.post("/auth/register", async (req, res) => {
       res.status(400).json({ error: "Professor email must end with @neu.edu.tr" });
       return;
     }
+    if (!invitationCode?.trim()) {
+      res.status(400).json({ error: "Invitation code is required for professors" });
+      return;
+    }
   } else {
     res.status(400).json({ error: "Invalid role. Must be student or professor" });
     return;
@@ -115,6 +119,23 @@ router.post("/auth/register", async (req, res) => {
     }
   }
 
+  // Validate invitation code for professor registration
+  let inviteId: string | null = null;
+  if (role === "professor") {
+    const invite = await db.select({ id: invitationCodesTable.id }).from(invitationCodesTable)
+      .where(and(
+        eq(invitationCodesTable.code, invitationCode!.trim().toUpperCase()),
+        eq(invitationCodesTable.role, "professor"),
+        eq(invitationCodesTable.used, false),
+        gt(invitationCodesTable.expiresAt, new Date())
+      )).limit(1);
+    if (invite.length === 0) {
+      res.status(400).json({ error: "Invalid or expired invitation code" });
+      return;
+    }
+    inviteId = invite[0]!.id;
+  }
+
   // Store pending data in verification code record (as JSON in email field prefix)
   // We encode the registration payload temporarily in the code type field
   const code = generateCode();
@@ -125,7 +146,7 @@ router.post("/auth/register", async (req, res) => {
 
   // Store as a special pending-registration code (type = "email_verify")
   // We embed the full payload in a JSON string stored as the code value
-  const payload = JSON.stringify({ code, passwordHash, name, role, studentNumber: studentNumber?.trim() ?? null });
+  const payload = JSON.stringify({ code, passwordHash, name, role, studentNumber: studentNumber?.trim() ?? null, invitationCodeId: inviteId });
   await db.insert(verificationCodesTable).values({
     email: normalizedEmail,
     code: payload,
@@ -172,7 +193,7 @@ router.post("/auth/verify-email", async (req, res) => {
 
   // Check the most recent one
   const record = records[records.length - 1]!;
-  let payload: { code: string; passwordHash: string; name: string; role: string; studentNumber: string | null };
+  let payload: { code: string; passwordHash: string; name: string; role: string; studentNumber: string | null; invitationCodeId?: string | null };
   try {
     payload = JSON.parse(record.code) as typeof payload;
   } catch {
@@ -185,10 +206,17 @@ router.post("/auth/verify-email", async (req, res) => {
     return;
   }
 
-  // Mark code as used
+  // Mark verification code as used
   await db.update(verificationCodesTable)
     .set({ used: true })
     .where(eq(verificationCodesTable.id, record.id));
+
+  // If professor registration, mark invitation code as used
+  if (payload.invitationCodeId) {
+    await db.update(invitationCodesTable)
+      .set({ used: true, usedBy: normalizedEmail, usedAt: new Date() })
+      .where(eq(invitationCodesTable.id, payload.invitationCodeId));
+  }
 
   // Create the user
   const [user] = await db.insert(usersTable).values({
@@ -361,24 +389,39 @@ router.post("/auth/reset-password", async (req, res) => {
   res.status(200).json({ message: "Password reset successfully" });
 });
 
-/* ── GET /api/auth/me ── */
-router.get("/auth/me", (req, res) => {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader?.startsWith("Bearer ")) {
-    res.status(401).json({ error: "No token provided" });
+/* ── POST /api/auth/validate-invitation ── checks if an invitation code is valid ── */
+router.post("/auth/validate-invitation", async (req, res) => {
+  const { code } = req.body as { code?: string };
+  if (!code?.trim()) {
+    res.status(400).json({ error: "Invitation code is required" });
     return;
   }
   try {
-    const token = authHeader.slice(7);
-    const decoded = jwt.verify(token, JWT_SECRET);
-    res.status(200).json({ user: decoded });
-  } catch {
-    res.status(401).json({ error: "Invalid or expired token" });
+    const invites = await db.select({ id: invitationCodesTable.id, role: invitationCodesTable.role, expiresAt: invitationCodesTable.expiresAt })
+      .from(invitationCodesTable)
+      .where(and(
+        eq(invitationCodesTable.code, code.trim().toUpperCase()),
+        eq(invitationCodesTable.used, false),
+        gt(invitationCodesTable.expiresAt, new Date())
+      )).limit(1);
+    if (invites.length === 0) {
+      res.status(400).json({ error: "Invalid or expired invitation code" });
+      return;
+    }
+    res.status(200).json({ valid: true, role: invites[0]!.role });
+  } catch (err) {
+    req.log.error(err, "Failed to validate invitation code");
+    res.status(500).json({ error: "Failed to validate invitation code" });
   }
 });
 
-/* ── POST /api/auth/init-demo ── creates all demo accounts (idempotent) ── */
-router.post("/auth/init-demo", async (_req, res) => {
+/* ── GET /api/auth/me ── */
+router.get("/auth/me", requireAuth, (req, res) => {
+  res.status(200).json({ user: req.user });
+});
+
+/* ── POST /api/auth/init-demo ── creates all demo accounts (idempotent, admin only) ── */
+router.post("/auth/init-demo", requireAuth, requireRole("admin"), async (_req, res) => {
   await seedDemoAccounts();
   res.status(200).json({
     message: "Demo accounts seeded",

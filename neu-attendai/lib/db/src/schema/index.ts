@@ -5,3 +5,4 @@ export * from "./settings";
 export * from "./userCourses";
 export * from "./users";
 export * from "./verificationCodes";
+export * from "./invitationCodes";

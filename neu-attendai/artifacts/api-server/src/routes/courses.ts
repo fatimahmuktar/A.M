@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { coursesTable } from "@workspace/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -26,7 +27,7 @@ const ImportBodySchema = z.object({
   semester: z.string().default(""),
 });
 
-router.get("/courses", async (req, res) => {
+router.get("/courses", requireAuth, async (req, res) => {
   try {
     const semester = typeof req.query.semester === "string" ? req.query.semester.trim() : "";
     const rows = semester
@@ -39,7 +40,7 @@ router.get("/courses", async (req, res) => {
   }
 });
 
-router.get("/courses/search", async (req, res) => {
+router.get("/courses/search", requireAuth, async (req, res) => {
   try {
     const q = typeof req.query.q === "string" ? req.query.q.trim().toLowerCase() : "";
     const rows = await db.select().from(coursesTable).orderBy(coursesTable.id);
@@ -58,7 +59,7 @@ router.get("/courses/search", async (req, res) => {
   }
 });
 
-router.get("/courses/semesters", async (req, res) => {
+router.get("/courses/semesters", requireAuth, async (req, res) => {
   try {
     const rows = await db
       .selectDistinct({ semester: coursesTable.semester })
@@ -72,7 +73,7 @@ router.get("/courses/semesters", async (req, res) => {
   }
 });
 
-router.post("/courses/import", async (req, res) => {
+router.post("/courses/import", requireAuth, requireRole("admin"), async (req, res) => {
   const parsed = ImportBodySchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues });
@@ -84,7 +85,6 @@ router.post("/courses/import", async (req, res) => {
   try {
     for (const c of courses) {
       const sem = c.semester || bodySemester || "";
-      /* Check by ID only (id is the sole PK) */
       const existing = await db
         .select({ id: coursesTable.id })
         .from(coursesTable)
@@ -129,7 +129,7 @@ router.post("/courses/import", async (req, res) => {
   }
 });
 
-router.post("/courses", async (req, res) => {
+router.post("/courses", requireAuth, requireRole("admin"), async (req, res) => {
   const parsed = CourseBodySchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues });
@@ -163,7 +163,7 @@ router.post("/courses", async (req, res) => {
   }
 });
 
-router.delete("/courses", async (req, res) => {
+router.delete("/courses", requireAuth, requireRole("admin"), async (req, res) => {
   try {
     await db.delete(coursesTable);
     res.json({ deleted: "all" });
@@ -173,8 +173,8 @@ router.delete("/courses", async (req, res) => {
   }
 });
 
-router.delete("/courses/:id", async (req, res) => {
-  const { id } = req.params;
+router.delete("/courses/:id", requireAuth, requireRole("admin"), async (req, res) => {
+  const id = req.params.id as string;
   try {
     await db.delete(coursesTable).where(eq(coursesTable.id, id));
     res.json({ deleted: id });
