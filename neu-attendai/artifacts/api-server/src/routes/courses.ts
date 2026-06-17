@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
+import { db, pool } from "@workspace/db";
 import { coursesTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -80,49 +80,22 @@ router.post("/courses/import", requireAuth, requireRole("admin"), async (req, re
     return;
   }
   const { courses, semester: bodySemester } = parsed.data;
-  let inserted = 0;
-  let updated = 0;
   try {
+    const sem = bodySemester || "";
+    const valueTuples = courses.map((_, i) => {
+      const off = i * 12;
+      return `($${off + 1},$${off + 2},$${off + 3},$${off + 4},$${off + 5},$${off + 6},$${off + 7},$${off + 8},$${off + 9},$${off + 10},$${off + 11},$${off + 12})`;
+    }).join(",");
+    const params: any[] = [];
     for (const c of courses) {
-      const sem = c.semester || bodySemester || "";
-      const existing = await db
-        .select({ id: coursesTable.id })
-        .from(coursesTable)
-        .where(eq(coursesTable.id, c.id));
-      if (existing.length > 0) {
-        await db.update(coursesTable).set({
-          name:       c.name,
-          instructor: c.instructor,
-          room:       c.room,
-          days:       c.days,
-          startTime:  c.startTime,
-          endTime:    c.endTime,
-          source:     c.source,
-          semester:   sem,
-          enrollment: c.enrollment,
-          ...(c.lat != null ? { lat: String(c.lat) } : {}),
-          ...(c.lng != null ? { lng: String(c.lng) } : {}),
-        }).where(eq(coursesTable.id, c.id));
-        updated++;
-      } else {
-        await db.insert(coursesTable).values({
-          id:         c.id,
-          name:       c.name,
-          instructor: c.instructor,
-          room:       c.room,
-          days:       c.days,
-          startTime:  c.startTime,
-          endTime:    c.endTime,
-          source:     c.source,
-          semester:   sem,
-          enrollment: c.enrollment,
-          ...(c.lat != null ? { lat: String(c.lat) } : {}),
-          ...(c.lng != null ? { lng: String(c.lng) } : {}),
-        });
-        inserted++;
-      }
+      const s = c.semester || sem;
+      params.push(c.id, c.name, c.instructor, c.room, c.days, c.startTime, c.endTime, c.source, s, c.enrollment ?? 0, c.lat != null ? String(c.lat) : null, c.lng != null ? String(c.lng) : null);
     }
-    res.json({ inserted, updated, total: courses.length, semester: bodySemester });
+    await pool.query(
+      `INSERT INTO courses (id,name,instructor,room,days,start_time,end_time,source,semester,enrollment,lat,lng) VALUES ${valueTuples} ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name,instructor=EXCLUDED.instructor,room=EXCLUDED.room,days=EXCLUDED.days,start_time=EXCLUDED.start_time,end_time=EXCLUDED.end_time,source=EXCLUDED.source,semester=EXCLUDED.semester,enrollment=EXCLUDED.enrollment,lat=COALESCE(EXCLUDED.lat,courses.lat),lng=COALESCE(EXCLUDED.lng,courses.lng)`,
+      params
+    );
+    res.json({ inserted: courses.length, updated: 0, total: courses.length, semester: bodySemester });
   } catch (err) {
     req.log.error(err, "Failed to import courses");
     res.status(500).json({ error: "Failed to import courses" });

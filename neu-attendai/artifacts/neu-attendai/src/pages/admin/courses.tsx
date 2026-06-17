@@ -11,7 +11,7 @@ import {
 import {
   Search, MapPin, Upload, FileSpreadsheet,
   X, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, Trash2,
-  Database, CalendarDays, Settings2, RefreshCw, OctagonX,
+  Database, CalendarDays, Settings2, RefreshCw, OctagonX, Loader2,
 } from "lucide-react";
 // xlsx is loaded dynamically inside parseExcelFile to avoid Vite polyfill issues
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,7 +34,7 @@ import {
 } from "@/lib/api";
 import { useLang } from "@/context/lang-context";
 
-type ImportStatus = "idle" | "preview" | "success" | "error";
+type ImportStatus = "idle" | "preview" | "saving" | "success" | "error";
 
 /* ── Semester helpers ────────────────────────────────────────────── */
 
@@ -557,6 +557,7 @@ export default function CourseManagement() {
   };
 
   const confirmImport = async () => {
+    setImportStatus("saving");
     const tagged = importedCourses.map((c) => ({ ...c, semester: importSemester }));
     setCourses((prev) => {
         /* Deduplicate by ID only — matches DB schema (id is sole PK) */
@@ -840,9 +841,9 @@ export default function CourseManagement() {
                   {showPreview ? "Hide" : "Show"}
                 </Button>
                 <Button variant="outline" size="sm" onClick={cancelImport}>{t("common.cancel")}</Button>
-                <Button size="sm" onClick={confirmImport} className="gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Save to DB ({importedCourses.length})
+                <Button size="sm" onClick={confirmImport} disabled={importStatus === "saving"} className="gap-2">
+                  {importStatus === "saving" ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  {importStatus === "saving" ? "Saving..." : `Save to DB (${importedCourses.length})`}
                 </Button>
               </div>
             </div>
