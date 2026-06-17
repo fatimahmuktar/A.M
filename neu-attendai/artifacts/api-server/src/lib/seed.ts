@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "@workspace/db";
-import { usersTable, sessionsTable, attendanceTable } from "@workspace/db/schema";
+import { usersTable, sessionsTable, attendanceTable, coursesTable } from "@workspace/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { logger } from "./logger";
 
@@ -78,6 +78,21 @@ export async function seedDemoAccounts(): Promise<void> {
     } catch (err) {
       logger.error({ err, oldEmail }, "Failed to remove old demo account");
     }
+  }
+
+  // Seed demo courses
+  try {
+    const DEMO_COURSES = [
+      { id: "COM382-FRI-1330", name: "Software Engineering", instructor: "Demo Professor", room: "LB-05", days: "Fri", startTime: "13:30", endTime: "15:00", semester: "2026-Spring" },
+      { id: "COM381-MON-0900", name: "Database Systems",     instructor: "Demo Professor", room: "LB-03", days: "Mon", startTime: "09:00", endTime: "10:30", semester: "2026-Spring" },
+      { id: "COM383-WED-1000", name: "Computer Networks",    instructor: "Demo Professor", room: "LB-04", days: "Wed", startTime: "10:00", endTime: "11:30", semester: "2026-Spring" },
+    ];
+    for (const c of DEMO_COURSES) {
+      await db.insert(coursesTable).values(c).onConflictDoNothing();
+    }
+    logger.info("Demo courses seeded");
+  } catch (err) {
+    logger.error({ err }, "Failed to seed demo courses");
   }
 
   // Seed demo sessions for COM382-FRI-1330
