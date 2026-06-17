@@ -4,10 +4,19 @@ import { seedDemoAccounts } from "./lib/seed";
 import { pool } from "@workspace/db";
 
 const MIGRATIONS = `
+DROP TABLE IF EXISTS "invitation_codes" CASCADE;
+DROP TABLE IF EXISTS "verification_codes" CASCADE;
+DROP TABLE IF EXISTS "attendance_records" CASCADE;
+DROP TABLE IF EXISTS "sessions" CASCADE;
+DROP TABLE IF EXISTS "student_courses" CASCADE;
+DROP TABLE IF EXISTS "professor_courses" CASCADE;
+DROP TABLE IF EXISTS "courses" CASCADE;
+DROP TABLE IF EXISTS "settings" CASCADE;
+DROP TABLE IF EXISTS "users" CASCADE;
 CREATE TABLE IF NOT EXISTS "users" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-  "email" text NOT NULL,
-  "student_number" varchar(30),
+  "email" text NOT NULL UNIQUE,
+  "student_number" varchar(30) UNIQUE,
   "password_hash" text NOT NULL,
   "name" text NOT NULL,
   "role" text NOT NULL,
