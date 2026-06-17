@@ -136,8 +136,16 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
 
-  pool.query(MIGRATIONS)
+  const dbUrl = process.env.DATABASE_URL || "not set";
+  logger.info({ dbUrl: dbUrl.substring(0, 20) + "..." }, "Starting migration");
+
+  pool.connect()
+    .then((client) => {
+      logger.info({}, "Database connected");
+      client.release();
+      return pool.query(MIGRATIONS);
+    })
     .then(() => logger.info({}, "Migration complete"))
     .then(() => seedDemoAccounts().catch((e) => logger.error({ err: e }, "Seed failed")))
-    .catch((e) => logger.error({ err: e }, "Migration failed"));
+    .catch((e) => logger.error({ err: e }, "Database error"));
 });
