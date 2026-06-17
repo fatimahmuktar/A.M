@@ -556,7 +556,7 @@ export default function CourseManagement() {
     if (file) handleFile(file);
   };
 
-  const confirmImport = () => {
+  const confirmImport = async () => {
     const tagged = importedCourses.map((c) => ({ ...c, semester: importSemester }));
     setCourses((prev) => {
         /* Deduplicate by ID only — matches DB schema (id is sole PK) */
@@ -571,7 +571,7 @@ export default function CourseManagement() {
       return merged;
     });
 
-    apiImportCourses(
+    const result = await apiImportCourses(
       tagged.map((c) => ({
         id: c.id, name: c.name, instructor: c.instructor ?? "",
         room: c.room ?? "", days: c.days ?? "",
@@ -581,17 +581,17 @@ export default function CourseManagement() {
         enrollment: c.enrollment ?? 0,
       })),
       importSemester
-    ).then((r) => {
-      if (r.data) {
-        /* refresh semesters list */
-        apiGetSemesters().then((s) => {
-          if (s.data) setAvailSemesters(s.data.semesters);
-        });
-      }
-    });
-
-    setImportStatus("success");
-    setImportedCourses([]);
+    );
+    if (result.data) {
+      setImportStatus("success");
+      setImportedCourses([]);
+      apiGetSemesters().then((s) => {
+        if (s.data) setAvailSemesters(s.data.semesters);
+      });
+    } else {
+      setErrorMsg(result.error || "Failed to save to database");
+      setImportStatus("error");
+    }
     setWarnings([]);
   };
 
