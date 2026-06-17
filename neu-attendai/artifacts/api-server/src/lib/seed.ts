@@ -13,8 +13,9 @@ interface DemoUser {
 }
 
 export const DEMO_USERS: DemoUser[] = [
-  { email: "admin@neu.edu.tr", name: "Admin User",     password: "123456789", role: "admin",     studentNumber: null },
-  { email: "prof@neu.edu.tr",  name: "Demo Professor", password: "123456789", role: "professor", studentNumber: null },
+  { email: "admin@neu.edu.tr", name: "Admin User",       password: "123456789", role: "admin",     studentNumber: null },
+  { email: "prof@neu.edu.tr",  name: "Demo Professor",   password: "123456789", role: "professor", studentNumber: null },
+  { email: "s20225507@neu.edu.tr", name: "Fatumo Mukhtar", password: "123456789", role: "student",   studentNumber: "20225507" },
 ];
 
 /* Demo sessions for COM382-FRI-1330 — fixed UUIDs so seed is idempotent */
